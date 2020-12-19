@@ -43,8 +43,11 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 	uint8_t  byte = 0;
 	uint8_t  lastByteRead = NOTHING_KNOWN;
 	/* status is initialised in readTrackChunk() as it can persist through multiple calls to readEvent(), as a "running status" */
-	uint8_t  dataA = 0;
-	uint8_t  dataB = 0;
+	uint8_t  statusNibbleA;
+	uint8_t  statusNibbleB;
+	uint8_t  dataByteA = 0;
+	uint8_t  dataByteB = 0;
+	uint8_t  dataByteLength = 0;
 
 	byte = getc(inputFilePointer);
 	position++;
@@ -63,11 +66,41 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 		 * Keep the running status from the last event
 		 */
 
-		dataA = byte;
+		dataByteA = byte;
 		lastByteRead = DATA_A_KNOWN;
 	}
 
-	/* TODO: Switch or if-else-if-etc based on the status to determine the data length etc */
+	/*
+	 * Split up the status into two nibbles, as Channel Voice Messages use the first nibble for the command, and the second for the channel
+	 * See midi.pdf page 100, "Table I: Summary of Status Bytes"
+	 */
 
-	printf("status %02X, data %02X\n", status, dataA);
+	statusNibbleA = status >> 4;
+	statusNibbleB = status & 0x0F;
+
+	switch (statusNibbleA) {
+	case 0x08:
+	case 0x09:
+	case 0x0A:
+	case 0x0B:
+	case 0x0E:
+		dataByteLength = 2;
+		break;
+
+	case 0x0C:
+	case 0x0D:
+		dataByteLength = 1;
+		break;
+
+	case 0x0F:
+		/* TODO: determine data length for these edge cases! */
+		break;
+
+	default:
+		/* This shouldn't happen! */
+	}
+
+	/* TODO: we know how many bytes we've read, and how many are required, so get the remaining ones */
+
+	printf("status %02X, data %02X\n", status, dataByteA);
 }
