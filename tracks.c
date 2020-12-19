@@ -39,8 +39,7 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 	/* status is initialised in readTrackChunk() as it can persist through multiple calls to readEvent(), as a "running status" */
 	uint8_t  statusNibbleA;
 	uint8_t  statusNibbleB;
-	uint8_t  dataByteA = 0;
-	uint8_t  dataByteB = 0;
+	uint8_t  data[2] = {0, 0};
 	uint8_t  dataBytesRequired = 0;
 	uint8_t  dataBytesRead = 0;
 
@@ -61,7 +60,7 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 		 * Keep the running status from the last event
 		 */
 
-		dataByteA = byte;
+		data[0] = byte;
 		dataBytesRead = 1;
 	}
 
@@ -100,7 +99,11 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 	 * so get the remaining ones
 	 */
 
-	if ()
+	while (dataBytesRequired > dataBytesRead) {
+		data[dataBytesRead] = getc(inputFilePointer);
+		position++;
+		dataBytesRead++;
+	}
 
 	printf("status %02X, data %02X\n", status, dataByteA);
 }
