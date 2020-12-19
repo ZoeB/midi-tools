@@ -30,7 +30,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 	/*
 	 * Most MIDI events consist of 1 to 3 bytes: a status byte followed by 0 to 2 data bytes.
 	 * There are exceptions:
-	 * system exclusive messages (SysEx) can have more data bytes.
+	 * System Exclusive Messages can have more data bytes.
 	 * A running status allows us to skip a status byte entirely, and dive straight into data bytes!
 	 * See midi.pdf page 100, "Table I: Summary of Status Bytes"
 	 */
@@ -165,7 +165,6 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 		case 0x0C:
 		case 0x0D:
 		case 0x0E:
-		case 0x0F:
 
 			/*
 			 * System Real Time Messages, with no data
@@ -175,7 +174,15 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 			dataBytesRequired = 0; /* This is redundant, just to clarify */
 			break;
 
-			/* TODO: implement FF meta-events, see P136.  How do they differ from MIDI status FF, System Reset? */
+		case 0x0F:
+
+			/*
+			 * In a live MIDI stream, a status of FF is the System Real Time Message of System Reset.
+			 * In a stored MIDI file, that's not necessary, so it's repurposed for Meta Events.
+			 * See midi.pdf page 137, "Meta-Events"
+			 */
+
+			/* TODO: implement this! */
 			break;
 		}
 
