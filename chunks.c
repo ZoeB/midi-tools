@@ -23,7 +23,7 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	uint8_t  divisionType = DIVISION_TYPE_PPQN;
 	uint16_t pulsesPerQuarterNote = 24;
 	uint8_t  framesPerSecond = 0;
-	uint8_t  unitsPerFrame = 0;
+	uint8_t  pulsesPerFrame = 0;
 
 	format = getc(inputFilePointer) << 8;
 	format |= getc(inputFilePointer);
@@ -40,7 +40,7 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 
 		divisionType = DIVISION_TYPE_SMPTE;
 		framesPerSecond = (division >> 8) & 0b01111111; /* TODO */
-		unitsPerFrame = division & 0b11111111; /* TODO */
+		pulsesPerFrame = division & 0b11111111; /* TODO */
 	} else {
 
 		/*
@@ -67,7 +67,7 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	printf("\tNumber of tracks: %i\n", numberOfTracks);
 
 	if (divisionType == DIVISION_TYPE_SMPTE) {
-		printf("\tDivision: %i frames per second, %i units per frame\n", framesPerSecond, unitsPerFrame);
+		printf("\tDivision: %i frames per second, %i pulses per frame\n", framesPerSecond, pulsesPerFrame);
 	} else {
 		printf("\tDivision: %i pulses per quarter note\n", pulsesPerQuarterNote);
 	}
@@ -86,9 +86,11 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 /* See midi.pdf page 134, "Track Chunks" */
 
 void readTrackChunk(FILE *inputFilePointer, uint32_t chunkLength) {
-	uint32_t position = 0;
+	uint32_t ticks = 0;
 
-	for (position = 0; position < chunkLength; position++) {
+	for (positionInTrack = 0; positionInTrack < chunkLength; positionInTrack++) {
+		ticks = readVariableLengthQuantity(inputFilePointer);
+		printf("\t%i ticks in: <event>\n", ticks);
 		getc(inputFilePointer);
 	}
 }
