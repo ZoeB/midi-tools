@@ -107,17 +107,29 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 
 			/*
 			 * System Exclusive Message start, with variable data length
-			 * This starts with the length, but we can ignore that and simply look look for the ending F7
-			 * Note: no we can't, because some cheeky devices use F7 to mean "begin additional SysEx Message" instead of "end SysEx Message".  So I'd best read the number and skip that many bytes!
+			 * This starts with the length.  Theoretically, we can ignore that and simply look look for the F7 status that signifies the end of the System Exclusive Message, but that plan's scuppered: some cheeky MIDI devices use F7 to mean "begin additional System Exclusive Message" instead of "end previous System Exclusive Message".  So we need to read the number of bytes to skip, and do so!
 			 * See midi.pdf page 135, "<sysex event>..."
 			 */
 
+/* Don't do this!  See comment above.
 			while (getc(inputFilePointer) != 0xF7) {
 				(*position)++;
 			}
 
 			(*position)++;
 			return;
+*/
+
+			uint32_t bytesToSkip = 0;
+
+			bytesToSkip = readVariableLengthQuantity(inputFilePointer, &position);
+
+			while (bytesToSkip > 0) {
+				getc(inputFilePointer);
+				(*position)++;
+				bytesToSkip--;
+			}
+
 			break; /* Clearly, this is also redundant, but generally good practice */
 
 		case 0x01:
