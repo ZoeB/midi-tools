@@ -18,7 +18,7 @@ void readChunk(FILE *inputFilePointer, uint32_t chunkLength) {
  * by way of my own Impulse Tracker and Akai filesystem
  * listing programs. */
 
-void describeFile(FILE *inputFilePointer) {
+void readFile(FILE *inputFilePointer) {
 	int16_t  chunkType[4] = {'\0', '\0', '\0', '\0'}; /* Not uint8_t, as it might be EOF, which is -1 */
 	uint32_t chunkLength = 0;
 
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 	FILE *filePointer;
 
 	if (argc == 1) {
-		describeFile(stdin);
+		readFile(stdin);
 	} else {
 		while (--argc > 0) {
 			filePointer = fopen(*++argv, "r");
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 				continue;
 			}
 
-			describeFile(filePointer);
+			readFile(filePointer);
 			fclose(filePointer);
 		}
 	}
