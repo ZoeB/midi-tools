@@ -15,7 +15,7 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer, uint32_t *position) 
 
 	do {
 		byte = getc(inputFilePointer);
-		position++;
+		(*position)++;
 		quantity <<= 7;
 		quantity |= byte;
 	} while (byte & 0b10000000);
@@ -44,7 +44,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 	uint32_t bytesToSkip = 0; /* For System Exclusive Messages */
 
 	byte = getc(inputFilePointer);
-	position++;
+	(*position)++;
 
 	if (byte & 0b10000000) {
 
@@ -114,18 +114,18 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 
 /* Don't do this!  See comment above.
 			while (getc(inputFilePointer) != 0xF7) {
-				position++;
+				(*position)++;
 			}
 
-			position++;
+			(*position)++;
 			return;
 */
 
-			bytesToSkip = readVariableLengthQuantity(inputFilePointer, position);
+			bytesToSkip = readVariableLengthQuantity(inputFilePointer, &position);
 
 			while (bytesToSkip > 0) {
 				getc(inputFilePointer);
-				position++;
+				(*position)++;
 				bytesToSkip--;
 			}
 
@@ -184,16 +184,14 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 			 */
 
 			/* metaEventType = */ getc(inputFilePointer);
-			position++;
-		printf("\n%04i bytes in\n", position);
+			(*position)++;
 
-			bytesToSkip = readVariableLengthQuantity(inputFilePointer, position);
+			bytesToSkip = readVariableLengthQuantity(inputFilePointer, &position);
 			printf("meta event, %04i bytes long\n", bytesToSkip);
 
 			while (bytesToSkip > 0) {
 				getc(inputFilePointer);
-				position++;
-		printf("\n%04i bytes in\n", position);
+				(*position)++;
 				bytesToSkip--;
 			}
 
@@ -215,7 +213,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 
 	while (dataBytesRequired > dataBytesRead) {
 		dataBytes[dataBytesRead] = getc(inputFilePointer);
-		position++;
+		(*position)++;
 		dataBytesRead++;
 	}
 

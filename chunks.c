@@ -91,7 +91,6 @@ void readTrackChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	uint8_t status = 0;
 
 	while (position < chunkLength) {
-		printf("\n%04i bytes in\n", position);
 		ticks = readVariableLengthQuantity(inputFilePointer, &position);
 		printf("\t%04i more ticks in: ", ticks);
 		readEvent(inputFilePointer, &position, &status);
