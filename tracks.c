@@ -35,6 +35,8 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 	 * See midi.pdf page 100, "Table I: Summary of Status Bytes"
 	 */
 
+/* TODO!  The most obvious solution here is to note, based on whether the first byte was a status or data, where we're up to, in terms of which byte it just was.  Then, based on the status, I can work out how many (more) data bytes to read.  But I should think about it for a day or two first, to see if any better solution becomes clear. */
+
 	uint8_t  byte = 0;
 	uint8_t  dataA = 0;
 	uint8_t  dataB = 0;
