@@ -39,7 +39,7 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 		 */
 
 		divisionType = DIVISION_TYPE_SMPTE;
-		framesPerSecond = (division & 0b0111111100000000) >> 8; /* TODO */
+		framesPerSecond = (division >> 8) & 0b01111111; /* TODO */
 		unitsPerFrame = division & 0b11111111; /* TODO */
 	} else {
 
