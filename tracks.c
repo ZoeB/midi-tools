@@ -187,6 +187,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 			(*position)++;
 
 			bytesToSkip = readVariableLengthQuantity(inputFilePointer, &position);
+			printf("meta event, %04i bytes long\n", bytesToSkip);
 
 			while (bytesToSkip > 0) {
 				getc(inputFilePointer);
