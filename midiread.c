@@ -6,19 +6,19 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define FORMAT_SINGLE_TRACK 0
-#define FORMAT_MULTIPLE_SIMULTANEOUS_TRACKS 1
-#define FORMAT_MULTIPLE_INDEPENDENT_TRACK 2
-
-#define DIVISION_TYPE_PPQN 0
-#define DIVISION_TYPE_SMPTE 1
-
 /* See midi.pdf page 133, "Header Chunks" */
 
 void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	if (chunkLength < 6) {
 		return; /* This shouldn't happen */
 	}
+
+	#define FORMAT_SINGLE_TRACK 0
+	#define FORMAT_MULTIPLE_SIMULTANEOUS_TRACKS 1
+	#define FORMAT_MULTIPLE_INDEPENDENT_TRACK 2
+
+	#define DIVISION_TYPE_PPQN 0
+	#define DIVISION_TYPE_SMPTE 1
 
 	uint16_t format = 0;
 	uint16_t numberOfTracks = 0;
