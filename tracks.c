@@ -163,8 +163,8 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 			dataBytesRequired = 0; /* This is redundant, just to clarify */
 			break;
 
-		case 0x0F: /* In addition to being a System Reset, also a Meta Event with variable data length?  That can't be right, I must have misunderstood something!  TODO: check! */
-			/* TODO: implement FF meta-events, see P136 */
+			/* TODO: implement FF meta-events, see P136.  How do they differ from MIDI status FF, System Reset? */
+			break;
 		}
 
 		break;
