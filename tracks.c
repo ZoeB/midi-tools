@@ -36,7 +36,7 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 	 */
 
 	uint8_t  byte = 0;
-	/* status is initialised in readTrackChunk() as it can persist through multiple calls to readEvent(), as a "running status" */
+	/* uint8_t status is initialised in readTrackChunk() as it can persist through multiple calls to readEvent(), as a "running status" */
 	uint8_t  statusNibbles[2] = {0, 0};
 	uint8_t  dataBytes[2] = {0, 0};
 	uint8_t  dataBytesRequired = 0;
