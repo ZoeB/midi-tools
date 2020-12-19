@@ -1,5 +1,5 @@
 /*
- * Universal functions
+ * Track-level functions
  */
 
 /* See midi.pdf page 131, "Conventions" */
@@ -21,4 +21,7 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer) {
 	} while (byte & 0b10000000);
 
 	return quantity;
+}
+
+void readEvent() {
 }
