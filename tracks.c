@@ -47,7 +47,7 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 	uint8_t  statusNibbleB;
 	uint8_t  dataByteA = 0;
 	uint8_t  dataByteB = 0;
-	uint8_t  dataByteLength = 0;
+	uint8_t  eventByteLength = 0;
 
 	byte = getc(inputFilePointer);
 	position++;
@@ -84,12 +84,12 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 	case 0x0A:
 	case 0x0B:
 	case 0x0E:
-		dataByteLength = 2;
+		eventByteLength = 3;
 		break;
 
 	case 0x0C:
 	case 0x0D:
-		dataByteLength = 1;
+		eventByteLength = 2;
 		break;
 
 	case 0x0F:
@@ -100,7 +100,12 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 		/* This shouldn't happen! */
 	}
 
-	/* TODO: we know how many bytes we've read, and how many are required, so get the remaining ones */
+	/*
+	 * We know how many bytes we've read, and how many are required,
+	 * so get the remaining ones
+	 */
+
+	if ()
 
 	printf("status %02X, data %02X\n", status, dataByteA);
 }
