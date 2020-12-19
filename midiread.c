@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-/* See midi.pdf page 133 */
+/* See midi.pdf page 133, "Header Chunks" */
 
 void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	uint32_t position = 0;
@@ -16,7 +16,7 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	}
 }
 
-/* See midi.pdf page 132 */
+/* See midi.pdf page 134, "Track Chunks" */
 
 void readTrackChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	uint32_t position = 0;
@@ -36,7 +36,7 @@ void readUnknownChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	}
 }
 
-/* See midi.pdf page 132 */
+/* See midi.pdf page 132, "Chunks" */
 
 void readFile(FILE *inputFilePointer) {
 	int16_t  chunkType[4] = {'\0', '\0', '\0', '\0'}; /* Not uint8_t, as it might be EOF, which is -1 */
