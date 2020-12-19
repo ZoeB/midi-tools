@@ -129,6 +129,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 				bytesToSkip--;
 			}
 
+			return;
 			break; /* Clearly, this is also redundant, but generally good practice */
 
 		case 0x01:
@@ -193,7 +194,8 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 				bytesToSkip--;
 			}
 
-			break;
+			return;
+			break; /* Clearly, this is also redundant, but generally good practice */
 		}
 
 		break;
