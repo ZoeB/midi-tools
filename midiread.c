@@ -9,11 +9,24 @@
 /* See midi.pdf page 133, "Header Chunks" */
 
 void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
-	uint32_t position = 0;
-
-	for (position = 0; position < chunkLength; position++) {
-		getc(inputFilePointer);
+	if (chunkLength != 6) {
+		return;
 	}
+
+	uint16_t format = 0;
+	uint16_t numberOfTracks = 0;
+	uint16_t division = 0;
+
+	format = getc(inputFilePointer) << 8;
+	format |= getc(inputFilePointer);
+	numberOfTracks = getc(inputFilePointer) << 8;
+	numberOfTracks |= getc(inputFilePointer);
+	division = getc(inputFilePointer) << 8;
+	division |= getc(inputFilePointer);
+
+	printf("\tFormat: %i\n", format);
+	printf("\tNumber of tracks: %i\n", numberOfTracks);
+	printf("\tDivision: %i\n", division);
 }
 
 /* See midi.pdf page 134, "Track Chunks" */
