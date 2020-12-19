@@ -16,8 +16,8 @@
 /* See midi.pdf page 133, "Header Chunks" */
 
 void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
-	if (chunkLength != 6) {
-		return;
+	if (chunkLength < 6) {
+		return; /* This shouldn't happen */
 	}
 
 	uint16_t format = 0;
