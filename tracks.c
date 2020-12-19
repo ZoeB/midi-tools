@@ -16,7 +16,7 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer, *position) {
 	do {
 		byte = getc(inputFilePointer);
 		position++;
-		quantity <<= 8;
+		quantity <<= 7;
 		quantity |= byte;
 	} while (byte & 0b10000000);
 
