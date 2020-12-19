@@ -23,5 +23,30 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer, *position) {
 	return quantity;
 }
 
+/* See midi.pdf page 35, "Data Format" */
+
 void readEvent(FILE *inputFilePointer, *position, *status) {
+	uint8_t  byte = 0;
+	uint8_t  data = 0;
+
+	byte = getc(inputFilePointer);
+	position++;
+
+	if (byte & 0b10000000) {
+
+		/*
+		 * Change the status
+		 */
+
+		status = byte;
+		data = getc(inputFilePointer);
+		position++;
+	} else {
+
+		/*
+		 * Keep the running status from the last event
+		 */
+
+		data = byte;
+	}
 }
