@@ -179,10 +179,20 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 			/*
 			 * In a live MIDI stream, a status of FF is the System Real Time Message of System Reset.
 			 * In a stored MIDI file, that's not necessary, so it's repurposed for Meta Events.
-			 * See midi.pdf page 137, "Meta-Events"
+			 * See midi.pdf page 137, "Meta-Events" (which doesn't mention that, and perhaps should)
 			 */
 
-			/* TODO: implement this! */
+			/* metaEventType = */ getc(inputFilePointer);
+			(*position)++;
+
+			bytesToSkip = readVariableLengthQuantity(inputFilePointer, &position);
+
+			while (bytesToSkip > 0) {
+				getc(inputFilePointer);
+				(*position)++;
+				bytesToSkip--;
+			}
+
 			break;
 		}
 
