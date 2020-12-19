@@ -26,6 +26,15 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer, *position) {
 /* See midi.pdf page 35, "Data Format" */
 
 void readEvent(FILE *inputFilePointer, *position, *status) {
+
+	/*
+	 * Most MIDI events consist of 1 to 3 bytes: a status byte followed by 0 to 2 data bytes.
+	 * There are exceptions:
+	 * system exclusive messages (SysEx) can have more data bytes.
+	 * A running status allows us to skip a status byte entirely, and dive straight into data bytes!
+	 * See midi.pdf page 100, "Table I: Summary of Status Bytes"
+	 */
+
 	uint8_t  byte = 0;
 	uint8_t  dataA = 0;
 	uint8_t  dataB = 0;
