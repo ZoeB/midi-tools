@@ -6,6 +6,10 @@
 #include <stdint.h>
 #include <stdio.h>
 
+/*
+ * Chunk-level functions
+ */
+
 /* See midi.pdf page 133, "Header Chunks" */
 
 void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
@@ -107,6 +111,10 @@ void readUnknownChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	}
 }
 
+/*
+ * File-level functions
+ */
+
 /* See midi.pdf page 132, "Chunks" */
 
 void readFile(FILE *inputFilePointer) {
@@ -141,6 +149,10 @@ void readFile(FILE *inputFilePointer) {
 		}
 	}
 }
+
+/*
+ * OS-level functions
+ */
 
 int main(int argc, char *argv[]) {
 	FILE *filePointer;
