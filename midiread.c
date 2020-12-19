@@ -21,8 +21,8 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	uint16_t division = 0;
 
 	uint8_t  divisionType = DIVISION_TYPE_PPQN;
-	uint16_t ppqn = 24;
-	uint8_t  framerate = 0;
+	uint16_t pulsesPerQuarterNote = 24;
+	uint8_t  framesPerSecond = 0;
 	uint8_t  unitsPerFrame = 0;
 
 	format = getc(inputFilePointer) << 8;
@@ -39,7 +39,7 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 		 */
 
 		divisionType = DIVISION_TYPE_SMPTE;
-		framerate = (division & 0b0111111100000000) >> 8; /* TODO */
+		framesPerSecond = (division & 0b0111111100000000) >> 8; /* TODO */
 		unitsPerFrame = division & 0b11111111; /* TODO */
 	} else {
 
@@ -48,16 +48,16 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 		 */
 
 		divisionType = DIVISION_TYPE_PPQN; /* Yes, this is redundant, as I've already set it as the default anyway */
-		ppqn = division;
+		pulsesPerQuarterNote = division;
 	}
 
 	printf("\tFormat: %i\n", format);
 	printf("\tNumber of tracks: %i\n", numberOfTracks);
 
 	if (divisionType == DIVISION_TYPE_SMPTE) {
-		printf("\tDivision: %i frames per second, %i units per frame\n", framerate, unitsPerFrame);
+		printf("\tDivision: %i frames per second, %i units per frame\n", framesPerSecond, unitsPerFrame);
 	} else {
-		printf("\tDivision: %i PPQN\n", ppqn);
+		printf("\tDivision: %i pulses per quarter note\n", pulsesPerQuarterNote);
 	}
 }
 
