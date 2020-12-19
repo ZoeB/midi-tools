@@ -49,7 +49,7 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 	if (byte & 0b10000000) {
 
 		/*
-		 * Change the status
+		 * The first byte is a status.  Update the running status.
 		 */
 
 		status = byte;
@@ -57,7 +57,7 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 	} else {
 
 		/*
-		 * Keep the running status from the last event
+		 * The first byte is data.  Save it.  Keep the running status from the last event.
 		 */
 
 		data[0] = byte;
