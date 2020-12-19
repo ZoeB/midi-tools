@@ -103,8 +103,13 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 		 */
 
 		switch (statusNibbles[1]) {
-		case 0x00: /* System Exclusive Message start, with variable data length */
-			/* TODO: implement sysex starts */
+		case 0x00:
+
+			/*
+			 * System Exclusive Message start, with variable data length
+			 */
+
+			/* TODO! */
 			break;
 
 		case 0x01:
@@ -129,7 +134,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 		case 0x04: /* Undefined System Common Message */
 		case 0x05: /* Undefined System Common Message */
 		case 0x06: /* System Common Message with no data bytes */
-		case 0x07: /* System Exclusive Message end, with no data bytes */
+		case 0x07: /* System Exclusive Message end, with no data bytes (this shouldn't happen, as this byte should only be received within the SysEx loop above) */
 
 			dataBytesRequired = 0; /* This is redundant, just to clarify */
 			break;
