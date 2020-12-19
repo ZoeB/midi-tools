@@ -4,7 +4,7 @@
 
 /* See midi.pdf page 131, "Conventions" */
 
-uint32_t readVariableLengthQuantity(FILE *inputFilePointer, *position) {
+uint32_t readVariableLengthQuantity(FILE *inputFilePointer, uint32_t *position) {
 
 	/*
 	 * Read a 1 to 4 byte number
@@ -25,7 +25,7 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer, *position) {
 
 /* See midi.pdf page 35, "Data Format" */
 
-void readEvent(FILE *inputFilePointer, *position, *status) {
+void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 
 	/*
 	 * Most MIDI events consist of 1 to 3 bytes: a status byte followed by 0 to 2 data bytes.
