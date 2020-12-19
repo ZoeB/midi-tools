@@ -107,10 +107,17 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 
 			/*
 			 * System Exclusive Message start, with variable data length
+			 * This starts with the length, but we can ignore that and simply look look for the ending F7
+			 * See midi.pdf page 135, "<sysex event>..."
 			 */
 
-			/* TODO! */
-			break;
+			while (getc(inputFilePointer) != 0xF7) {
+				(*position)++;
+			}
+
+			(*position)++;
+			return;
+			break; /* Clearly, this is also redundant, but generally good practice */
 
 		case 0x01:
 		case 0x03:
