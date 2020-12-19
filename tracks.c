@@ -41,6 +41,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 	uint8_t  dataBytes[2] = {0, 0};
 	uint8_t  dataBytesRequired = 0;
 	uint8_t  dataBytesRead = 0;
+	uint32_t bytesToSkip = 0; /* For System Exclusive Messages */
 
 	byte = getc(inputFilePointer);
 	(*position)++;
@@ -119,8 +120,6 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 			(*position)++;
 			return;
 */
-
-			uint32_t bytesToSkip = 0;
 
 			bytesToSkip = readVariableLengthQuantity(inputFilePointer, &position);
 
