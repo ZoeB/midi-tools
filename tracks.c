@@ -108,6 +108,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 			/*
 			 * System Exclusive Message start, with variable data length
 			 * This starts with the length, but we can ignore that and simply look look for the ending F7
+			 * Note: no we can't, because some cheeky devices use F7 to mean "begin additional SysEx Message" instead of "end SysEx Message".  So I'd best read the number and skip that many bytes!
 			 * See midi.pdf page 135, "<sysex event>..."
 			 */
 
