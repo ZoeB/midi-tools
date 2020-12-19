@@ -35,8 +35,13 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 	 * See midi.pdf page 100, "Table I: Summary of Status Bytes"
 	 */
 
+	#define NOTHING_KNOWN = 0;
+	#define STATUS_KNOWN = 1;
+	#define DATA_A_KNOWN = 2;
+	#define DATA_B_KNOWN = 3;
+
 	uint8_t  byte = 0;
-	uint8_t  lastByteRead = 0; /* 0 = we don't know anything; 1 = we know the status; 2 = we know dataA; 3 = we know dataB */
+	uint8_t  lastByteRead = NOTHING_KNOWN;
 	/* status is initialised in readTrackChunk() as it can persist through multiple calls to readEvent(), as a "running status" */
 	uint8_t  dataA = 0;
 	uint8_t  dataB = 0;
@@ -51,7 +56,7 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 		 */
 
 		status = byte;
-		lastByteRead = 1;
+		lastByteRead = STATUS_KNOWN;
 	} else {
 
 		/*
@@ -59,7 +64,7 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 		 */
 
 		dataA = byte;
-		lastByteRead = 2;
+		lastByteRead = DATA_A_KNOWN;
 	}
 
 	/* TODO: Switch or if-else-if-etc based on the status to determine the data length etc */
