@@ -27,7 +27,8 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer, *position) {
 
 void readEvent(FILE *inputFilePointer, *position, *status) {
 	uint8_t  byte = 0;
-	uint8_t  data = 0;
+	uint8_t  dataA = 0;
+	uint8_t  dataB = 0;
 
 	byte = getc(inputFilePointer);
 	position++;
@@ -39,7 +40,18 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 		 */
 
 		status = byte;
-		data = getc(inputFilePointer);
+
+		if (status < 0xF8) {
+
+			/*
+			 * The status is NOT a system realtime message, so read at least one data byte
+			 * See midi.pdf page 38, "Data Bytes"
+			 * See midi.pdf page 62, "System Real Time Messages"
+			 */
+
+			dataA = getc(inputFilePointer);
+		}
+
 		position++;
 	} else {
 
@@ -47,8 +59,8 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 		 * Keep the running status from the last event
 		 */
 
-		data = byte;
+		dataA = byte;
 	}
 
-	printf("status %02X, data %02X\n", status, data);
+	printf("status %02X, data %02X\n", status, dataA);
 }
