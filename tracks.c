@@ -49,4 +49,6 @@ void readEvent(FILE *inputFilePointer, *position, *status) {
 
 		data = byte;
 	}
+
+	printf("status %02X, data %02X\n", status, data);
 }
