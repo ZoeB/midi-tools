@@ -90,7 +90,7 @@ void readTrackChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 
 	for (positionInTrack = 0; positionInTrack < chunkLength; positionInTrack++) {
 		ticks = readVariableLengthQuantity(inputFilePointer);
-		printf("\t%i ticks in: <event>\n", ticks);
+		printf("\t%i more ticks in: <event>\n", ticks);
 		getc(inputFilePointer);
 	}
 }
