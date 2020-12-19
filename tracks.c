@@ -4,7 +4,7 @@
 
 /* See midi.pdf page 131, "Conventions" */
 
-uint32_t readVariableLengthQuantity(FILE *inputFilePointer) {
+uint32_t readVariableLengthQuantity(FILE *inputFilePointer, *position) {
 
 	/*
 	 * Read a 1 to 4 byte number
@@ -15,7 +15,7 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer) {
 
 	do {
 		byte = getc(inputFilePointer);
-		positionInTrack++;
+		position++;
 		quantity <<= 8;
 		quantity |= byte;
 	} while (byte & 0b10000000);
@@ -23,5 +23,5 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer) {
 	return quantity;
 }
 
-void readEvent() {
+void readEvent(FILE *inputFilePointer, *position) {
 }

@@ -6,8 +6,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-uint32_t positionInTrack = 0; /* Used in both readTrackChunk() and readVariableLengthQuantity() */
-
 #include "tracks.c"
 #include "chunks.c"
 
