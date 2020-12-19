@@ -59,6 +59,16 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	} else {
 		printf("\tDivision: %i pulses per quarter note\n", pulsesPerQuarterNote);
 	}
+
+	/*
+	 * Discard remaining Header Chunk bytes, if there are more than 6
+	 */
+
+	uint32_t position = 6;
+
+	for (position = 6; position < chunkLength; position++) {
+		getc(inputFilePointer);
+	}
 }
 
 /* See midi.pdf page 134, "Track Chunks" */
