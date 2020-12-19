@@ -6,7 +6,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
-void readChunk(FILE *inputFilePointer, uint32_t chunkLength) {
+/* See midi.pdf page 133 */
+
+void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	uint32_t position = 0;
 
 	for (position = 0; position < chunkLength; position++) {
@@ -14,9 +16,27 @@ void readChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	}
 }
 
-/* This is mostly ripping off K&R's ANSI C, page 162, "Cat",
- * by way of my own Impulse Tracker and Akai filesystem
- * listing programs. */
+/* See midi.pdf page 132 */
+
+void readTrackChunk(FILE *inputFilePointer, uint32_t chunkLength) {
+	uint32_t position = 0;
+
+	for (position = 0; position < chunkLength; position++) {
+		getc(inputFilePointer);
+	}
+}
+
+/* "Skip" might be more accurate than "read". */
+
+void readUnknownChunk(FILE *inputFilePointer, uint32_t chunkLength) {
+	uint32_t position = 0;
+
+	for (position = 0; position < chunkLength; position++) {
+		getc(inputFilePointer);
+	}
+}
+
+/* See midi.pdf page 132 */
 
 void readFile(FILE *inputFilePointer) {
 	int16_t  chunkType[4] = {'\0', '\0', '\0', '\0'}; /* Not uint8_t, as it might be EOF, which is -1 */
@@ -40,13 +60,14 @@ void readFile(FILE *inputFilePointer) {
 
 		if (chunkType[0] == 'M' && chunkType[1] == 'T' && chunkType[2] == 'h' && chunkType[3] == 'd') {
 			printf("Header chunk, %i bytes\n", chunkLength);
+			readHeaderChunk(inputFilePointer, chunkLength);
 		} else if (chunkType[0] == 'M' && chunkType[1] == 'T' && chunkType[2] == 'r' && chunkType[3] == 'k') {
 			printf("Track chunk, %i bytes\n", chunkLength);
+			readTrackChunk(inputFilePointer, chunkLength);
 		} else {
 			printf("Unknown chunk, %i bytes\n", chunkLength);
+			readUnknownChunk(inputFilePointer, chunkLength);
 		}
-
-		readChunk(inputFilePointer, chunkLength);
 	}
 }
 
