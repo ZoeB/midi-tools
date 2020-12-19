@@ -23,5 +23,5 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer, *position) {
 	return quantity;
 }
 
-void readEvent(FILE *inputFilePointer, *position, status) {
+void readEvent(FILE *inputFilePointer, *position, *status) {
 }
