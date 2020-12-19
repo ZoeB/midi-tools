@@ -77,16 +77,84 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 	case 0x0A:
 	case 0x0B:
 	case 0x0E:
+
+		/*
+		 * Channel Voice Messages / Channel Mode Messages, with set data lengths
+		 */
+
 		dataBytesRequired = 2;
 		break;
 
 	case 0x0C:
 	case 0x0D:
+
+		/*
+		 * More Channel Voice Messages, with set data lengths
+		 */
+
 		dataBytesRequired = 1;
 		break;
 
 	case 0x0F:
-		/* TODO: determine data length for these edge cases! */
+
+		/*
+		 * System Messages are edge cases, with various data lengths
+		 * See midi.pdf page 105, "Table V: System Common Messages"
+		 */
+
+		switch (statusNibbles[1]) {
+		case 0x00: /* System Exclusive Message start, with variable data length */
+			/* TODO: implement sysex starts */
+			break;
+
+		case 0x01:
+		case 0x03:
+
+			/*
+			 * System Common Messages, with set data lengths
+			 */
+
+			dataBytesRequired = 1;
+			break;
+
+		case 0x02:
+
+			/*
+			 * More System Common Messages, with set data lengths
+			 */
+
+			dataBytesRequired = 2;
+			break;
+
+		case 0x04: /* Undefined System Common Message */
+		case 0x05: /* Undefined System Common Message */
+		case 0x06: /* System Common Message with no data bytes */
+		case 0x07: /* System Exclusive Message end, with no data bytes */
+
+			dataBytesRequired = 0; /* This is redundant, just to clarify */
+			break;
+
+		case 0x08:
+		case 0x09:
+		case 0x0A:
+		case 0x0B:
+		case 0x0C:
+		case 0x0D:
+		case 0x0E:
+		case 0x0F:
+
+			/*
+			 * System Real Time Messages, with no data
+			 * See midi.pdf page 106, "Table VI: System Real Time Messages"
+			 */
+
+			dataBytesRequired = 0; /* This is redundant, just to clarify */
+			break;
+
+		case 0x0F: /* In addition to being a System Reset, also a Meta Event with variable data length?  That can't be right, I must have misunderstood something!  TODO: check! */
+			/* TODO: implement FF meta-events, see P136 */
+		}
+
 		break;
 
 	default:
