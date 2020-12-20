@@ -23,6 +23,64 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer) {
 	return quantity;
 }
 
+void readMetaEvent(FILE *inputFilePointer) {
+	uint8_t  metaEventType = 0;
+	uint32_t bytesToSkip = 0;
+
+	metaEventType = getc(inputFilePointer);
+	position++;
+
+	switch (metaEventType) {
+	case 0x00: /* Sequence Number */
+	case 0x21: /* TODO: find out what this is.  Reason seems to output it.  People on forums and online guides report that it's the MIDI Port, but I'd like to see it in an official spec if possible.  It seems to take 3 bytes in Reason's output, although allegedly it only needs 2. */
+		bytesToSkip = 3;
+		break;
+
+	case 0x20: /* MIDI Channel Prefix */
+		bytesToSkip = 2;
+		break;
+
+	case 0x51: /* Set Tempo */
+		bytesToSkip = 4;
+		break;
+
+	case 0x01: /* Text Event */
+	case 0x02: /* Copyright Notice */
+	case 0x03: /* Sequence/Track Name */
+	case 0x04: /* Instrument Name */
+	case 0x05: /* Lyric */
+	case 0x06: /* Marker */
+	case 0x07: /* Cue Point */
+	case 0x7F: /* Sequencer-Specific Meta-Event */
+			bytesToSkip = readVariableLengthQuantity(inputFilePointer);
+			break;
+
+	case 0x2F: /* End of Track */
+		bytesToSkip = 1;
+		break;
+
+	case 0x54: /* SMPTE Offset */
+		bytesToSkip = 6;
+		break;
+
+	case 0x58: /* Time Signature */
+		bytesToSkip = 5;
+		break;
+
+	case 0x59: /* Key Signature */
+		bytesToSkip = 3;
+		break;
+	}
+
+	printf("meta event type %02X, %04i bytes long\n", metaEventType, bytesToSkip);
+
+	while (bytesToSkip > 0) {
+		getc(inputFilePointer);
+		position++;
+		bytesToSkip--;
+	}
+}
+
 /* See midi.pdf page 35, "Data Format" */
 
 void readEvent(FILE *inputFilePointer) {
@@ -42,7 +100,6 @@ void readEvent(FILE *inputFilePointer) {
 	uint8_t  dataBytesRequired = 0;
 	uint8_t  dataBytesRead = 0;
 	uint32_t bytesToSkip = 0; /* For System Exclusive Messages */
-	uint8_t  metaEventType = 0;
 
 	byte = getc(inputFilePointer);
 	position++;
@@ -185,61 +242,7 @@ void readEvent(FILE *inputFilePointer) {
 			 */
 
 			/* TODO: display these values instead of skipping them */
-
-			metaEventType = getc(inputFilePointer);
-			position++;
-
-			switch (metaEventType) {
-			case 0x00: /* Sequence Number */
-			case 0x21: /* TODO: find out what this is.  Reason seems to output it.  People on forums and online guides report that it's the MIDI Port, but I'd like to see it in an official spec if possible.  It seems to take 3 bytes in Reason's output, although allegedly it only needs 2. */
-				bytesToSkip = 3;
-				break;
-
-			case 0x20: /* MIDI Channel Prefix */
-				bytesToSkip = 2;
-				break;
-
-			case 0x51: /* Set Tempo */
-				bytesToSkip = 4;
-				break;
-
-			case 0x01: /* Text Event */
-			case 0x02: /* Copyright Notice */
-			case 0x03: /* Sequence/Track Name */
-			case 0x04: /* Instrument Name */
-			case 0x05: /* Lyric */
-			case 0x06: /* Marker */
-			case 0x07: /* Cue Point */
-			case 0x7F: /* Sequencer-Specific Meta-Event */
-					bytesToSkip = readVariableLengthQuantity(inputFilePointer);
-					break;
-
-			case 0x2F: /* End of Track */
-				bytesToSkip = 1;
-				break;
-
-			case 0x54: /* SMPTE Offset */
-				bytesToSkip = 6;
-				break;
-
-			case 0x58: /* Time Signature */
-				bytesToSkip = 5;
-				break;
-
-			case 0x59: /* Key Signature */
-				bytesToSkip = 3;
-				break;
-			}
-
-			printf("meta event type %02X, %04i bytes long\n", metaEventType, bytesToSkip);
-
-			while (bytesToSkip > 0) {
-				getc(inputFilePointer);
-				position++;
-				bytesToSkip--;
-			}
-
-
+			readMetaEvent(inputFilePointer);
 			return;
 			break; /* Clearly, this is also redundant, but generally good practice */
 		}
