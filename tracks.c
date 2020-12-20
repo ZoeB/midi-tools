@@ -51,6 +51,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 		while (bytesLeft > 0) {
 			printf("%c", getc(inputFilePointer));
+			(*position)++;
 			bytesLeft--;
 		}
 
@@ -63,6 +64,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 		while (bytesLeft > 0) {
 			printf("%c", getc(inputFilePointer));
+			(*position)++;
 			bytesLeft--;
 		}
 
@@ -71,17 +73,20 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 	case 0x21: /* Port  TODO: verify this with official documentation.  People on forums and online guides report that it's the MIDI Port, but I'd like to see it in an official spec if possible. */
 		byte = getc(inputFilePointer);
+		(*position)++;
 
 		if (byte != 01) {
 			printf("(error: 01h expected, %02Xh received) ", byte);
 		}
 
 		byte = getc(inputFilePointer);
+		(*position)++;
 		printf("port %02X\n", byte);
 		return;
 
 	case 0x2F: /* End of Track */
 		byte = getc(inputFilePointer);
+		(*position)++;
 
 		if (byte != 00) {
 			printf("(error: 00h expected, %02Xh received) ", byte);
@@ -92,16 +97,20 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 	case 0x51: /* Set Tempo */
 		byte = getc(inputFilePointer);
+		(*position)++;
 
 		if (byte != 03) {
 			printf("(error: 03h expected, %02Xh received) ", byte);
 		}
 
 		tempo |= getc(inputFilePointer);
+		(*position)++;
 		tempo <<= 8;
 		tempo |= getc(inputFilePointer);
+		(*position)++;
 		tempo <<= 8;
 		tempo |= getc(inputFilePointer);
+		(*position)++;
 		printf("tempo %06Xh microseconds per quarter-note\n", tempo);
 		return;
 
