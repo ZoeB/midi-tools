@@ -95,6 +95,13 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		printf("tempo %06Xh microseconds per quarter-note\n", tempo);
 		return;
 
+	case 0x58: /* Time Signature */
+		printf("time signature\n"); /* TODO: display the actual signature */
+		bytesLeft = 5;
+		break;
+
+/* TODO: implement these properly rather than simply skipping them */
+
 	case 0x00: /* Sequence Number */
 		bytesLeft = 3;
 		break;
@@ -118,10 +125,6 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 	case 0x54: /* SMPTE Offset */
 		bytesLeft = 6;
-		break;
-
-	case 0x58: /* Time Signature */
-		bytesLeft = 5;
 		break;
 
 	case 0x59: /* Key Signature */
