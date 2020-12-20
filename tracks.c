@@ -4,7 +4,7 @@
 
 /* See midi.pdf page 131, "Conventions" */
 
-uint32_t readVariableLengthQuantity(FILE *inputFilePointer, uint32_t *position) {
+uint32_t readVariableLengthQuantity(FILE *inputFilePointer) {
 
 	/*
 	 * Read a 1 to 4 byte number
@@ -15,7 +15,7 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer, uint32_t *position) 
 
 	do {
 		byte = getc(inputFilePointer);
-		(*position)++;
+		position++;
 		quantity <<= 7;
 		quantity |= byte;
 	} while (byte & 0b10000000);
@@ -25,7 +25,7 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer, uint32_t *position) 
 
 /* See midi.pdf page 35, "Data Format" */
 
-void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
+void readEvent(FILE *inputFilePointer) {
 
 	/*
 	 * Most MIDI events consist of 1 to 3 bytes: a status byte followed by 0 to 2 data bytes.
@@ -36,7 +36,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 	 */
 
 	uint8_t  byte = 0;
-	/* uint8_t status is initialised in readTrackChunk() as it can persist through multiple calls to readEvent(), as a "running status" */
+	/* uint8_t status is global as it can persist through multiple calls to readEvent(), as a "running status" */
 	uint8_t  statusNibbles[2] = {0, 0};
 	uint8_t  dataBytes[2] = {0, 0};
 	uint8_t  dataBytesRequired = 0;
@@ -44,7 +44,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 	uint32_t bytesToSkip = 0; /* For System Exclusive Messages */
 
 	byte = getc(inputFilePointer);
-	(*position)++;
+	position++;
 
 	if (byte & 0b10000000) {
 
@@ -52,7 +52,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 		 * The first byte is a status.  Update the running status.
 		 */
 
-		*status = byte;
+		status = byte;
 		dataBytesRead = 0;
 	} else {
 
@@ -69,8 +69,8 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 	 * See midi.pdf page 100, "Table I: Summary of Status Bytes"
 	 */
 
-	statusNibbles[0] = *status >> 4;
-	statusNibbles[1] = *status & 0x0F;
+	statusNibbles[0] = status >> 4;
+	statusNibbles[1] = status & 0x0F;
 
 	switch (statusNibbles[0]) {
 	case 0x08:
@@ -114,18 +114,18 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 
 /* Don't do this!  See comment above.
 			while (getc(inputFilePointer) != 0xF7) {
-				(*position)++;
+				position++;
 			}
 
-			(*position)++;
+			position++;
 			return;
 */
 
-			bytesToSkip = readVariableLengthQuantity(inputFilePointer, &position);
+			bytesToSkip = readVariableLengthQuantity(inputFilePointer);
 
 			while (bytesToSkip > 0) {
 				getc(inputFilePointer);
-				(*position)++;
+				position++;
 				bytesToSkip--;
 			}
 
@@ -184,14 +184,14 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 			 */
 
 			/* metaEventType = */ getc(inputFilePointer);
-			(*position)++;
+			position++;
 
-			bytesToSkip = readVariableLengthQuantity(inputFilePointer, &position);
+			bytesToSkip = readVariableLengthQuantity(inputFilePointer);
 			printf("meta event, %04i bytes long\n", bytesToSkip);
 
 			while (bytesToSkip > 0) {
 				getc(inputFilePointer);
-				(*position)++;
+				position++;
 				bytesToSkip--;
 			}
 
@@ -213,9 +213,9 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 
 	while (dataBytesRequired > dataBytesRead) {
 		dataBytes[dataBytesRead] = getc(inputFilePointer);
-		(*position)++;
+		position++;
 		dataBytesRead++;
 	}
 
-	printf("status %02X, data %02X %02X\n", *status, dataBytes[0], dataBytes[1]);
+	printf("status %02X, data %02X %02X\n", status, dataBytes[0], dataBytes[1]);
 }

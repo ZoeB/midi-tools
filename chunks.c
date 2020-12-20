@@ -31,6 +31,7 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	numberOfTracks |= getc(inputFilePointer);
 	division = getc(inputFilePointer) << 8;
 	division |= getc(inputFilePointer);
+	position += 6;
 
 	if (division & 0b1000000000000000) {
 
@@ -76,24 +77,21 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	 * Discard remaining Header Chunk bytes, if there are more than 6
 	 */
 
-	uint32_t position = 6;
-
-	for (position = 6; position < chunkLength; position++) {
+	while (position < chunkLength) {
 		getc(inputFilePointer);
+		position++;
 	}
 }
 
 /* See midi.pdf page 134, "Track Chunks" */
 
 void readTrackChunk(FILE *inputFilePointer, uint32_t chunkLength) {
-	uint32_t position = 0;
 	uint32_t ticks = 0;
-	uint8_t status = 0;
 
 	while (position < chunkLength) {
-		ticks = readVariableLengthQuantity(inputFilePointer, &position);
+		ticks = readVariableLengthQuantity(inputFilePointer);
 		printf("\t%04i more ticks in: ", ticks);
-		readEvent(inputFilePointer, &position, &status);
+		readEvent(inputFilePointer);
 	}
 }
 
