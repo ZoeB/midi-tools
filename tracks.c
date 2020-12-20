@@ -36,7 +36,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 	uint8_t  metaEventType = 0;
 	uint8_t  byte = 0;
-	uint32_t quantity = 0;
+	uint32_t bytesLeft = 0;
 	uint32_t tempo = 0;
 
 	printf("meta event: ");
@@ -47,11 +47,11 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	switch (metaEventType) {
 	case 0x03: /* Sequence/Track Name */
 		printf("sequence/track name: ");
-		quantity = readVariableLengthQuantity(inputFilePointer, position);
+		bytesLeft = readVariableLengthQuantity(inputFilePointer, position);
 
-		while (quantity > 0) {
+		while (bytesLeft > 0) {
 			printf("%c", getc(inputFilePointer));
-			quantity--;
+			bytesLeft--;
 		}
 
 		printf("\n");
@@ -59,11 +59,11 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 	case 0x04: /* Instrument Name */
 		printf("instrument name: ");
-		quantity = readVariableLengthQuantity(inputFilePointer, position);
+		bytesLeft = readVariableLengthQuantity(inputFilePointer, position);
 
-		while (quantity > 0) {
+		while (bytesLeft > 0) {
 			printf("%c", getc(inputFilePointer));
-			quantity--;
+			bytesLeft--;
 		}
 
 		printf("\n");
@@ -96,11 +96,11 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		return;
 
 	case 0x00: /* Sequence Number */
-		quantity = 3;
+		bytesLeft = 3;
 		break;
 
 	case 0x20: /* MIDI Channel Prefix */
-		quantity = 2;
+		bytesLeft = 2;
 		break;
 
 	case 0x01: /* Text Event */
@@ -109,32 +109,32 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	case 0x06: /* Marker */
 	case 0x07: /* Cue Point */
 	case 0x7F: /* Sequencer-Specific Meta-Event */
-			quantity = readVariableLengthQuantity(inputFilePointer, position);
+			bytesLeft = readVariableLengthQuantity(inputFilePointer, position);
 			break;
 
 	case 0x2F: /* End of Track */
-		quantity = 1;
+		bytesLeft = 1;
 		break;
 
 	case 0x54: /* SMPTE Offset */
-		quantity = 6;
+		bytesLeft = 6;
 		break;
 
 	case 0x58: /* Time Signature */
-		quantity = 5;
+		bytesLeft = 5;
 		break;
 
 	case 0x59: /* Key Signature */
-		quantity = 3;
+		bytesLeft = 3;
 		break;
 	}
 
-	printf("type %02Xh, %04i bytes long\n", metaEventType, quantity);
+	printf("type %02Xh, %04i bytes long\n", metaEventType, bytesLeft);
 
-	while (quantity > 0) {
+	while (bytesLeft > 0) {
 		getc(inputFilePointer);
 		(*position)++;
-		quantity--;
+		bytesLeft--;
 	}
 }
 
