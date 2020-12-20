@@ -35,6 +35,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	/* TODO: display these values instead of skipping them */
 
 	uint8_t  metaEventType = 0;
+	uint8_t  byte = 0;
 	uint32_t quantity = 0;
 
 	printf("meta event: ");
@@ -67,8 +68,18 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		printf("\n");
 		return;
 
+	case 0x21: /* Port  TODO: verify this with official documentation.  People on forums and online guides report that it's the MIDI Port, but I'd like to see it in an official spec if possible.  It seems to take 3 bytes in Reason's output, although allegedly it only needs 2. */
+		byte = getc(inputFilePointer);
+
+		if (byte != 01) {
+			printf("error: 01 expected, %02X received ", byte);
+		}
+
+		byte = getc(inputFilePointer);
+		printf("port %02X\n", byte);
+		return;
+
 	case 0x00: /* Sequence Number */
-	case 0x21: /* TODO: find out what this is.  Reason seems to output it.  People on forums and online guides report that it's the MIDI Port, but I'd like to see it in an official spec if possible.  It seems to take 3 bytes in Reason's output, although allegedly it only needs 2. */
 		quantity = 3;
 		break;
 
