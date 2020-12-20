@@ -87,11 +87,13 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 
 void readTrackChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	uint32_t ticks = 0;
+	uint8_t  *status = 0; /* Initialised here, as it can persist from one
+	                       * MIDI event to the next, a "running status" */
 
 	while (position < chunkLength) {
 		ticks = readVariableLengthQuantity(inputFilePointer);
 		printf("\t%04i more ticks in: ", ticks);
-		readEvent(inputFilePointer);
+		readEvent(inputFilePointer, status);
 	}
 }
 

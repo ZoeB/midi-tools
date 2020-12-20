@@ -121,7 +121,7 @@ void readSystemExclusiveMessage(FILE *inputFilePointer) {
 
 /* See midi.pdf page 35, "Data Format" */
 
-void readEvent(FILE *inputFilePointer) {
+void readEvent(FILE *inputFilePointer, uint8_t *status) {
 
 	/*
 	 * Most MIDI events consist of 1 to 3 bytes: a status byte followed by 0 to 2 data bytes.

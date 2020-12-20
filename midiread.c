@@ -6,14 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-/*
- * MIDI handles one thing at a time, so it should be safe and most efficient
- * to use (and reuse) these global variables.  This also avoids pointers,
- * which have never been my forté.
- */
-
 uint32_t position = 0;
-uint8_t  status;
 
 #include "tracks.c"
 #include "chunks.c"
