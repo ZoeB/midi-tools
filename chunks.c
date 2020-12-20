@@ -4,7 +4,7 @@
 
 /* See midi.pdf page 133, "Header Chunks" */
 
-void readHeaderChunk(uint32_t chunkLength) {
+void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	if (chunkLength < 6) {
 		return; /* This shouldn't happen */
 	}
@@ -25,12 +25,12 @@ void readHeaderChunk(uint32_t chunkLength) {
 	uint8_t  framesPerSecond = 0;
 	uint8_t  ticksPerFrame = 0;
 
-	format = getc(filePointer) << 8;
-	format |= getc(filePointer);
-	numberOfTracks = getc(filePointer) << 8;
-	numberOfTracks |= getc(filePointer);
-	division = getc(filePointer) << 8;
-	division |= getc(filePointer);
+	format = getc(inputFilePointer) << 8;
+	format |= getc(inputFilePointer);
+	numberOfTracks = getc(inputFilePointer) << 8;
+	numberOfTracks |= getc(inputFilePointer);
+	division = getc(inputFilePointer) << 8;
+	division |= getc(inputFilePointer);
 	position += 6;
 
 	if (division & 0b1000000000000000) {
@@ -78,29 +78,29 @@ void readHeaderChunk(uint32_t chunkLength) {
 	 */
 
 	while (position < chunkLength) {
-		getc(filePointer);
+		getc(inputFilePointer);
 		position++;
 	}
 }
 
 /* See midi.pdf page 134, "Track Chunks" */
 
-void readTrackChunk(uint32_t chunkLength) {
+void readTrackChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	uint32_t ticks = 0;
 
 	while (position < chunkLength) {
-		ticks = readVariableLengthQuantity();
+		ticks = readVariableLengthQuantity(inputFilePointer);
 		printf("\t%04i more ticks in: ", ticks);
-		readEvent();
+		readEvent(inputFilePointer);
 	}
 }
 
 /* "Skip" might be more accurate than "read". */
 
-void readUnknownChunk(uint32_t chunkLength) {
+void readUnknownChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	uint32_t position = 0;
 
 	for (position = 0; position < chunkLength; position++) {
-		getc(filePointer);
+		getc(inputFilePointer);
 	}
 }
