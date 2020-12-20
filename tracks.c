@@ -55,6 +55,18 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		printf("\n");
 		return;
 
+	case 0x04: /* Instrument Name */
+		printf("instrument name: ");
+		quantity = readVariableLengthQuantity(inputFilePointer, position);
+
+		while (quantity > 0) {
+			printf("%c", getc(inputFilePointer));
+			quantity--;
+		}
+
+		printf("\n");
+		return;
+
 	case 0x00: /* Sequence Number */
 	case 0x21: /* TODO: find out what this is.  Reason seems to output it.  People on forums and online guides report that it's the MIDI Port, but I'd like to see it in an official spec if possible.  It seems to take 3 bytes in Reason's output, although allegedly it only needs 2. */
 		quantity = 3;
@@ -70,7 +82,6 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 	case 0x01: /* Text Event */
 	case 0x02: /* Copyright Notice */
-	case 0x04: /* Instrument Name */
 	case 0x05: /* Lyric */
 	case 0x06: /* Marker */
 	case 0x07: /* Cue Point */
