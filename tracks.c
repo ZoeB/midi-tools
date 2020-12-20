@@ -4,7 +4,7 @@
 
 /* See midi.pdf page 131, "Conventions" */
 
-uint32_t readVariableLengthQuantity(FILE *inputFilePointer) {
+uint32_t readVariableLengthQuantity() {
 
 	/*
 	 * Read a 1 to 4 byte number
@@ -14,7 +14,7 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer) {
 	uint8_t  byte = 0;
 
 	do {
-		byte = getc(inputFilePointer);
+		byte = getc(filePointer);
 		position++;
 		quantity <<= 7;
 		quantity |= byte;
@@ -23,7 +23,7 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer) {
 	return quantity;
 }
 
-void readMetaEvent(FILE *inputFilePointer) {
+void readMetaEvent() {
 
 	/*
 	 * In a live MIDI stream, a status of FF is the System Real Time Message of 
@@ -37,7 +37,7 @@ void readMetaEvent(FILE *inputFilePointer) {
 	uint8_t  metaEventType = 0;
 	uint32_t bytesToSkip = 0;
 
-	metaEventType = getc(inputFilePointer);
+	metaEventType = getc(filePointer);
 	position++;
 
 	switch (metaEventType) {
@@ -62,7 +62,7 @@ void readMetaEvent(FILE *inputFilePointer) {
 	case 0x06: /* Marker */
 	case 0x07: /* Cue Point */
 	case 0x7F: /* Sequencer-Specific Meta-Event */
-			bytesToSkip = readVariableLengthQuantity(inputFilePointer);
+			bytesToSkip = readVariableLengthQuantity();
 			break;
 
 	case 0x2F: /* End of Track */
@@ -85,13 +85,13 @@ void readMetaEvent(FILE *inputFilePointer) {
 	printf("meta event type %02X, %04i bytes long\n", metaEventType, bytesToSkip);
 
 	while (bytesToSkip > 0) {
-		getc(inputFilePointer);
+		getc(filePointer);
 		position++;
 		bytesToSkip--;
 	}
 }
 
-void readSystemExclusiveMessage(FILE *inputFilePointer) {
+void readSystemExclusiveMessage() {
 
 	/*
 	 * System Exclusive Message start, with variable data length
@@ -99,10 +99,10 @@ void readSystemExclusiveMessage(FILE *inputFilePointer) {
 	 * See midi.pdf page 135, "<sysex event>..."
 	 */
 
-	readSystemExclusiveMessage(inputFilePointer);
+	readSystemExclusiveMessage();
 
 /* Don't do this!  See comment above.
-	while (getc(inputFilePointer) != 0xF7) {
+	while (getc(filePointer) != 0xF7) {
 		position++;
 	}
 
@@ -110,10 +110,10 @@ void readSystemExclusiveMessage(FILE *inputFilePointer) {
 	return;
 */
 
-	bytesToSkip = readVariableLengthQuantity(inputFilePointer);
+	bytesToSkip = readVariableLengthQuantity();
 
 	while (bytesToSkip > 0) {
-		getc(inputFilePointer);
+		getc(filePointer);
 		position++;
 		bytesToSkip--;
 	}
@@ -121,7 +121,7 @@ void readSystemExclusiveMessage(FILE *inputFilePointer) {
 
 /* See midi.pdf page 35, "Data Format" */
 
-void readEvent(FILE *inputFilePointer) {
+void readEvent() {
 
 	/*
 	 * Most MIDI events consist of 1 to 3 bytes: a status byte followed by 0 to 2 data bytes.
@@ -139,7 +139,7 @@ void readEvent(FILE *inputFilePointer) {
 	uint8_t  dataBytesRead = 0;
 	uint32_t bytesToSkip = 0; /* For System Exclusive Messages */
 
-	byte = getc(inputFilePointer);
+	byte = getc(filePointer);
 	position++;
 
 	if (byte & 0b10000000) {
@@ -208,7 +208,7 @@ void readEvent(FILE *inputFilePointer) {
 			 * See midi.pdf page 135, "<sysex event>..."
 			 */
 
-			readSystemExclusiveMessage(inputFilePointer);
+			readSystemExclusiveMessage();
 			return;
 			break; /* Clearly, this is also redundant, but generally good practice */
 
@@ -263,7 +263,7 @@ void readEvent(FILE *inputFilePointer) {
 			 * See midi.pdf page 137, "Meta-Events" (which doesn't mention that, and perhaps should)
 			 */
 
-			readMetaEvent(inputFilePointer);
+			readMetaEvent();
 			return;
 			break; /* Clearly, this is also redundant, but generally good practice */
 		}
@@ -281,7 +281,7 @@ void readEvent(FILE *inputFilePointer) {
 	 */
 
 	while (dataBytesRequired > dataBytesRead) {
-		dataBytes[dataBytesRead] = getc(inputFilePointer);
+		dataBytes[dataBytesRead] = getc(filePointer);
 		position++;
 		dataBytesRead++;
 	}
