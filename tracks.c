@@ -351,5 +351,16 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 		dataBytesRead++;
 	}
 
-	printf("status %02Xh, data %02Xh %02Xh\n", *status, dataBytes[0], dataBytes[1]);
+	switch (statusNibbles[0]) {
+	case 0x08:
+		printf("note off, channel %Xh, note %02Xh, velocity %02Xh\n", statusNibbles[1], dataBytes[0], dataBytes[1]);
+		break;
+
+	case 0x09:
+		printf("note on, channel %Xh, note %02Xh, velocity %02Xh\n", statusNibbles[1], dataBytes[0], dataBytes[1]);
+		break;
+
+	default:
+		printf("status %02Xh, data %02Xh %02Xh\n", *status, dataBytes[0], dataBytes[1]);
+	}
 }
