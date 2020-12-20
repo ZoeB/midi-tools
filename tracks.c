@@ -81,7 +81,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 		byte = getc(inputFilePointer);
 		(*position)++;
-		printf("port %02X\n", byte);
+		printf("port %02Xh\n", byte);
 		return;
 
 	case 0x2F: /* End of Track */
