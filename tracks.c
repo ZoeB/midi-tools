@@ -99,7 +99,7 @@ void readSystemExclusiveMessage(FILE *inputFilePointer) {
 	 * See midi.pdf page 135, "<sysex event>..."
 	 */
 
-	readSystemExclusiveMessage(inputFilePointer);
+	uint32_t bytesToSkip = 0;
 
 /* Don't do this!  See comment above.
 	while (getc(inputFilePointer) != 0xF7) {
