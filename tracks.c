@@ -191,9 +191,15 @@ void readEvent(FILE *inputFilePointer) {
 
 			switch (metaEventType) {
 			case 0x00: /* Sequence Number */
+				bytesToSkip = 3;
+				break;
+
 			case 0x20: /* MIDI Channel Prefix */
-			case 0x51: /* Set Tempo */
 				bytesToSkip = 2;
+				break;
+
+			case 0x51: /* Set Tempo */
+				bytesToSkip = 4;
 				break;
 
 			case 0x01: /* Text Event */
@@ -216,7 +222,7 @@ void readEvent(FILE *inputFilePointer) {
 				break;
 
 			case 0x58: /* Time Signature */
-				bytesToSkip = 6;
+				bytesToSkip = 5;
 				break;
 
 			case 0x59: /* Key Signature */
