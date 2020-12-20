@@ -35,59 +35,71 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	/* TODO: display these values instead of skipping them */
 
 	uint8_t  metaEventType = 0;
-	uint32_t bytesToSkip = 0;
+	uint32_t quantity = 0;
+
+	printf("meta event: ");
 
 	metaEventType = getc(inputFilePointer);
 	(*position)++;
 
 	switch (metaEventType) {
+	case 0x03: /* Sequence/Track Name */
+		printf("sequence/track name: ");
+		quantity = readVariableLengthQuantity(inputFilePointer, &position);
+
+		while (quantity > 0) {
+			putc(getc(inputFilePointer));
+			quantity--;
+		}
+
+		break;
+
 	case 0x00: /* Sequence Number */
 	case 0x21: /* TODO: find out what this is.  Reason seems to output it.  People on forums and online guides report that it's the MIDI Port, but I'd like to see it in an official spec if possible.  It seems to take 3 bytes in Reason's output, although allegedly it only needs 2. */
-		bytesToSkip = 3;
+		quantity = 3;
 		break;
 
 	case 0x20: /* MIDI Channel Prefix */
-		bytesToSkip = 2;
+		quantity = 2;
 		break;
 
 	case 0x51: /* Set Tempo */
-		bytesToSkip = 4;
+		quantity = 4;
 		break;
 
 	case 0x01: /* Text Event */
 	case 0x02: /* Copyright Notice */
-	case 0x03: /* Sequence/Track Name */
 	case 0x04: /* Instrument Name */
 	case 0x05: /* Lyric */
 	case 0x06: /* Marker */
 	case 0x07: /* Cue Point */
 	case 0x7F: /* Sequencer-Specific Meta-Event */
-			bytesToSkip = readVariableLengthQuantity(inputFilePointer, &position);
+			quantity = readVariableLengthQuantity(inputFilePointer, &position);
 			break;
 
 	case 0x2F: /* End of Track */
-		bytesToSkip = 1;
+		quantity = 1;
 		break;
 
 	case 0x54: /* SMPTE Offset */
-		bytesToSkip = 6;
+		quantity = 6;
 		break;
 
 	case 0x58: /* Time Signature */
-		bytesToSkip = 5;
+		quantity = 5;
 		break;
 
 	case 0x59: /* Key Signature */
-		bytesToSkip = 3;
+		quantity = 3;
 		break;
 	}
 
-	printf("meta event type %02X, %04i bytes long\n", metaEventType, bytesToSkip);
+	printf("type %02X, %04i bytes long\n", metaEventType, quantity);
 
-	while (bytesToSkip > 0) {
+	while (quantity > 0) {
 		getc(inputFilePointer);
 		(*position)++;
-		bytesToSkip--;
+		quantity--;
 	}
 }
 
