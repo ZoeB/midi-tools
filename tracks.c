@@ -191,6 +191,7 @@ void readEvent(FILE *inputFilePointer) {
 
 			switch (metaEventType) {
 			case 0x00: /* Sequence Number */
+			case 0x21: /* TODO: find out what this is.  Reason seems to output it.  People on forums and online guides report that it's the MIDI Port, but I'd like to see it in an official spec if possible.  It seems to take 3 bytes in Reason's output, although allegedly it only needs 2. */
 				bytesToSkip = 3;
 				break;
 
