@@ -42,6 +42,7 @@ void readEvent(FILE *inputFilePointer) {
 	uint8_t  dataBytesRequired = 0;
 	uint8_t  dataBytesRead = 0;
 	uint32_t bytesToSkip = 0; /* For System Exclusive Messages */
+	uint8_t  metaEventType = 0;
 
 	byte = getc(inputFilePointer);
 	position++;
@@ -179,21 +180,58 @@ void readEvent(FILE *inputFilePointer) {
 
 			/*
 			 * In a live MIDI stream, a status of FF is the System Real Time Message of System Reset.
-			 * In a stored MIDI file, that's not necessary, so it's repurposed for Meta Events.
+			 * In a stored MIDI file, that's not necessary, so it's repurposed for Meta-Events.
 			 * See midi.pdf page 137, "Meta-Events" (which doesn't mention that, and perhaps should)
 			 */
 
-			/* metaEventType = */ getc(inputFilePointer);
+			/* TODO: display these values instead of skipping them */
+
+			metaEventType = getc(inputFilePointer);
 			position++;
 
-			bytesToSkip = readVariableLengthQuantity(inputFilePointer);
-			printf("meta event, %04i bytes long\n", bytesToSkip);
+			switch (metaEventType) {
+			case 0x00: /* Sequence Number */
+			case 0x20: /* MIDI Channel Prefix */
+			case 0x51: /* Set Tempo */
+				bytesToSkip = 2;
+				break;
+
+			case 0x01: /* Text Event */
+			case 0x02: /* Copyright Notice */
+			case 0x03: /* Sequence/Track Name */
+			case 0x04: /* Instrument Name */
+			case 0x05: /* Lyric */
+			case 0x06: /* Marker */
+			case 0x07: /* Cue Point */
+			case 0x7F: /* Sequencer-Specific Meta-Event */
+					bytesToSkip = readVariableLengthQuantity(inputFilePointer);
+					break;
+
+			case 0x2F: /* End of Track */
+				bytesToSkip = 1;
+				break;
+
+			case 0x54: /* SMPTE Offset */
+				bytesToSkip = 6;
+				break;
+
+			case 0x58: /* Time Signature */
+				bytesToSkip = 6;
+				break;
+
+			case 0x59: /* Key Signature */
+				bytesToSkip = 3;
+				break;
+			}
+
+			printf("meta event type %02X, %04i bytes long\n", metaEventType, bytesToSkip);
 
 			while (bytesToSkip > 0) {
 				getc(inputFilePointer);
 				position++;
 				bytesToSkip--;
 			}
+
 
 			return;
 			break; /* Clearly, this is also redundant, but generally good practice */
