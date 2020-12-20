@@ -73,18 +73,28 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		byte = getc(inputFilePointer);
 
 		if (byte != 01) {
-			printf("error: 01h expected, %02Xh received ", byte);
+			printf("(error: 01h expected, %02Xh received) ", byte);
 		}
 
 		byte = getc(inputFilePointer);
 		printf("port %02X\n", byte);
 		return;
 
+	case 0x2F: /* End of Track */
+		byte = getc(inputFilePointer);
+
+		if (byte != 00) {
+			printf("(error: 00h expected, %02Xh received) ", byte);
+		}
+
+		printf("end of track\n"); /* TODO: display the actual signature */
+		return;
+
 	case 0x51: /* Set Tempo */
 		byte = getc(inputFilePointer);
 
 		if (byte != 03) {
-			printf("error: 03h expected, %02Xh received ", byte);
+			printf("(error: 03h expected, %02Xh received) ", byte);
 		}
 
 		tempo |= getc(inputFilePointer);
@@ -117,10 +127,6 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	case 0x07: /* Cue Point */
 	case 0x7F: /* Sequencer-Specific Meta-Event */
 		bytesLeft = readVariableLengthQuantity(inputFilePointer, position);
-		break;
-
-	case 0x2F: /* End of Track */
-		bytesLeft = 1;
 		break;
 
 	case 0x54: /* SMPTE Offset */
