@@ -132,7 +132,7 @@ void readEvent(FILE *inputFilePointer, uint8_t *status) {
 	 */
 
 	uint8_t  byte = 0;
-	/* uint8_t status is global as it can persist through multiple calls to readEvent(), as a "running status" */
+	/* uint8_t status is initialised in readTrackChunk() as it can persist through multiple calls to readEvent(), as a "running status" */
 	uint8_t  statusNibbles[2] = {0, 0};
 	uint8_t  dataBytes[2] = {0, 0};
 	uint8_t  dataBytesRequired = 0;
@@ -148,7 +148,7 @@ void readEvent(FILE *inputFilePointer, uint8_t *status) {
 		 * The first byte is a status.  Update the running status.
 		 */
 
-		status = byte;
+		*status = byte;
 		dataBytesRead = 0;
 	} else {
 
@@ -165,8 +165,8 @@ void readEvent(FILE *inputFilePointer, uint8_t *status) {
 	 * See midi.pdf page 100, "Table I: Summary of Status Bytes"
 	 */
 
-	statusNibbles[0] = status >> 4;
-	statusNibbles[1] = status & 0x0F;
+	statusNibbles[0] = *status >> 4;
+	statusNibbles[1] = *status & 0x0F;
 
 	switch (statusNibbles[0]) {
 	case 0x08:
@@ -286,5 +286,5 @@ void readEvent(FILE *inputFilePointer, uint8_t *status) {
 		dataBytesRead++;
 	}
 
-	printf("status %02X, data %02X %02X\n", status, dataBytes[0], dataBytes[1]);
+	printf("status %02X, data %02X %02X\n", *status, dataBytes[0], dataBytes[1]);
 }
