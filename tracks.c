@@ -24,6 +24,16 @@ uint32_t readVariableLengthQuantity(FILE *inputFilePointer) {
 }
 
 void readMetaEvent(FILE *inputFilePointer) {
+
+	/*
+	 * In a live MIDI stream, a status of FF is the System Real Time Message of 
+	 * System Reset.  In a stored MIDI file, that's not necessary, so
+	 * it's repurposed for Meta-Events.  See midi.pdf page 137, "Meta-Events"
+	 * (which doesn't mention that, and perhaps should)
+	 */
+
+	/* TODO: display these values instead of skipping them */
+
 	uint8_t  metaEventType = 0;
 	uint32_t bytesToSkip = 0;
 
@@ -253,7 +263,6 @@ void readEvent(FILE *inputFilePointer) {
 			 * See midi.pdf page 137, "Meta-Events" (which doesn't mention that, and perhaps should)
 			 */
 
-			/* TODO: display these values instead of skipping them */
 			readMetaEvent(inputFilePointer);
 			return;
 			break; /* Clearly, this is also redundant, but generally good practice */
