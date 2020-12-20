@@ -81,6 +81,34 @@ void readMetaEvent(FILE *inputFilePointer) {
 	}
 }
 
+void readSystemExclusiveMessage(FILE *inputFilePointer) {
+
+	/*
+	 * System Exclusive Message start, with variable data length
+	 * This starts with the length.  Theoretically, we can ignore that and simply look look for the F7 status that signifies the end of the System Exclusive Message, but that plan's scuppered: some cheeky MIDI devices use F7 to mean "begin additional System Exclusive Message" instead of "end previous System Exclusive Message".  So we need to read the number of bytes to skip, and do so!
+	 * See midi.pdf page 135, "<sysex event>..."
+	 */
+
+	readSystemExclusiveMessage(inputFilePointer);
+
+/* Don't do this!  See comment above.
+	while (getc(inputFilePointer) != 0xF7) {
+		position++;
+	}
+
+	position++;
+	return;
+*/
+
+	bytesToSkip = readVariableLengthQuantity(inputFilePointer);
+
+	while (bytesToSkip > 0) {
+		getc(inputFilePointer);
+		position++;
+		bytesToSkip--;
+	}
+}
+
 /* See midi.pdf page 35, "Data Format" */
 
 void readEvent(FILE *inputFilePointer) {
@@ -170,23 +198,7 @@ void readEvent(FILE *inputFilePointer) {
 			 * See midi.pdf page 135, "<sysex event>..."
 			 */
 
-/* Don't do this!  See comment above.
-			while (getc(inputFilePointer) != 0xF7) {
-				position++;
-			}
-
-			position++;
-			return;
-*/
-
-			bytesToSkip = readVariableLengthQuantity(inputFilePointer);
-
-			while (bytesToSkip > 0) {
-				getc(inputFilePointer);
-				position++;
-				bytesToSkip--;
-			}
-
+			readSystemExclusiveMessage(inputFilePointer);
 			return;
 			break; /* Clearly, this is also redundant, but generally good practice */
 
