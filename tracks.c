@@ -45,10 +45,10 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	switch (metaEventType) {
 	case 0x03: /* Sequence/Track Name */
 		printf("sequence/track name: ");
-		quantity = readVariableLengthQuantity(inputFilePointer, &position);
+		quantity = readVariableLengthQuantity(inputFilePointer, position);
 
 		while (quantity > 0) {
-			putc(getc(inputFilePointer));
+			putc(getc(inputFilePointer), stdout);
 			quantity--;
 		}
 
@@ -74,7 +74,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	case 0x06: /* Marker */
 	case 0x07: /* Cue Point */
 	case 0x7F: /* Sequencer-Specific Meta-Event */
-			quantity = readVariableLengthQuantity(inputFilePointer, &position);
+			quantity = readVariableLengthQuantity(inputFilePointer, position);
 			break;
 
 	case 0x2F: /* End of Track */
@@ -122,7 +122,7 @@ void readSystemExclusiveMessage(FILE *inputFilePointer, uint32_t *position) {
 	return;
 */
 
-	bytesToSkip = readVariableLengthQuantity(inputFilePointer, &position);
+	bytesToSkip = readVariableLengthQuantity(inputFilePointer, position);
 
 	while (bytesToSkip > 0) {
 		getc(inputFilePointer);
@@ -220,7 +220,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 			 * See midi.pdf page 135, "<sysex event>..."
 			 */
 
-			readSystemExclusiveMessage(inputFilePointer, &position);
+			readSystemExclusiveMessage(inputFilePointer, position);
 			return;
 			break; /* Clearly, this is also redundant, but generally good practice */
 
@@ -275,7 +275,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 			 * See midi.pdf page 137, "Meta-Events" (which doesn't mention that, and perhaps should)
 			 */
 
-			readMetaEvent(inputFilePointer, &position);
+			readMetaEvent(inputFilePointer, position);
 			return;
 			break; /* Clearly, this is also redundant, but generally good practice */
 		}
