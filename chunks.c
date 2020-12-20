@@ -16,6 +16,7 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	#define DIVISION_TYPE_PPQN 0
 	#define DIVISION_TYPE_SMPTE 1
 
+	uint32_t position = 0;
 	uint16_t format = 0;
 	uint16_t numberOfTracks = 0;
 	uint16_t division = 0;
@@ -86,14 +87,15 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 /* See midi.pdf page 134, "Track Chunks" */
 
 void readTrackChunk(FILE *inputFilePointer, uint32_t chunkLength) {
+	uint32_t position = 0;
 	uint32_t ticks = 0;
 	uint8_t  status = 0; /* Initialised here, as it can persist from one
 	                       * MIDI event to the next, a "running status" */
 
 	while (position < chunkLength) {
-		ticks = readVariableLengthQuantity(inputFilePointer);
+		ticks = readVariableLengthQuantity(inputFilePointer, &position);
 		printf("\t%04i more ticks in: ", ticks);
-		readEvent(inputFilePointer, &status);
+		readEvent(inputFilePointer, &position, &status);
 	}
 }
 

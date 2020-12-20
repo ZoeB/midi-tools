@@ -6,8 +6,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-uint32_t position = 0;
-
 #include "tracks.c"
 #include "chunks.c"
 
