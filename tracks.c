@@ -37,6 +37,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	uint8_t  metaEventType = 0;
 	uint8_t  byte = 0;
 	uint32_t quantity = 0;
+	uint32_t tempo = 0;
 
 	printf("meta event: ");
 
@@ -72,11 +73,26 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		byte = getc(inputFilePointer);
 
 		if (byte != 01) {
-			printf("error: 01 expected, %02X received ", byte);
+			printf("error: 01h expected, %02Xh received ", byte);
 		}
 
 		byte = getc(inputFilePointer);
 		printf("port %02X\n", byte);
+		return;
+
+	case 0x51: /* Set Tempo */
+		byte = getc(inputFilePointer);
+
+		if (byte != 03) {
+			printf("error: 03h expected, %02Xh received ", byte);
+		}
+
+		tempo |= getc(inputFilePointer);
+		tempo <<= 8;
+		tempo |= getc(inputFilePointer);
+		tempo <<= 8;
+		tempo |= getc(inputFilePointer);
+		printf("tempo %06Xh microseconds per quarter-note\n", tempo);
 		return;
 
 	case 0x00: /* Sequence Number */
@@ -85,10 +101,6 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 	case 0x20: /* MIDI Channel Prefix */
 		quantity = 2;
-		break;
-
-	case 0x51: /* Set Tempo */
-		quantity = 4;
 		break;
 
 	case 0x01: /* Text Event */
@@ -117,7 +129,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		break;
 	}
 
-	printf("type %02X, %04i bytes long\n", metaEventType, quantity);
+	printf("type %02Xh, %04i bytes long\n", metaEventType, quantity);
 
 	while (quantity > 0) {
 		getc(inputFilePointer);
@@ -321,5 +333,5 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 		dataBytesRead++;
 	}
 
-	printf("status %02X, data %02X %02X\n", *status, dataBytes[0], dataBytes[1]);
+	printf("status %02Xh, data %02Xh %02Xh\n", *status, dataBytes[0], dataBytes[1]);
 }
