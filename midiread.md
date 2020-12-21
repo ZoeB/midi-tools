@@ -1,5 +1,11 @@
 # MIDIread
 
+## MIDI file structure
+
+Each MIDI file contains several *chunks*.  Each chunk is either a *header chunk* or a *track chunk*.
+
+Each track chunk contains several *events*.  Each event is either a *MIDI event*, *sysex event*, or *meta-event*.
+
 ## Features to possibly implement
 
 * Tidy up a MIDI file, to allow optional changes to it

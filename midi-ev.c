@@ -1,0 +1,4 @@
+/*
+ * MIDI event-level functions
+ */
+

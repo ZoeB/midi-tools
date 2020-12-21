@@ -6,6 +6,10 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "global.c"
+#include "midi-ev.c"
+#include "meta-ev.c"
+#include "sysex-ev.c"
 #include "tracks.c"
 #include "chunks.c"
 
