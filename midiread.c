@@ -10,7 +10,7 @@
 #include "midi-ev.c"
 #include "meta-ev.c"
 #include "sysex-ev.c"
-#include "tracks.c"
+#include "events.c"
 #include "chunks.c"
 
 /*

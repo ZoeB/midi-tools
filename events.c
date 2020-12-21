@@ -1,5 +1,5 @@
 /*
- * Track-level functions
+ * Event-level functions
  */
 
 /* See midi.pdf page 35, "Data Format" */
