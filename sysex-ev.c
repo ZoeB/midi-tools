@@ -22,6 +22,7 @@ void readSystemExclusiveMessage(FILE *inputFilePointer, uint32_t *position) {
 */
 
 	bytesToSkip = readVariableLengthQuantity(inputFilePointer, position);
+	printf("sysex event, %i bytes long\n", bytesToSkip);
 
 	while (bytesToSkip > 0) {
 		getc(inputFilePointer);
