@@ -29,7 +29,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	 * In a live MIDI stream, a status of FF is the System Real Time Message of 
 	 * System Reset.  In a stored MIDI file, that's not necessary, so
 	 * it's repurposed for Meta-Events.  See midi.pdf page 137, "Meta-Events"
-	 * (which doesn't mention that, and perhaps should)
+	 * (which doesn't mention repurposing the System Reset, and perhaps should)
 	 */
 
 	/* TODO: display these values instead of skipping them */
