@@ -83,13 +83,8 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 		 */
 
 		switch (statusNibbles[1]) {
-		case 0x00:
-
-			/*
-			 * System Exclusive Message start, with variable data length
-			 * This starts with the length.  Theoretically, we can ignore that and simply look look for the F7 status that signifies the end of the System Exclusive Message, but that plan's scuppered: some cheeky MIDI devices use F7 to mean "begin additional System Exclusive Message" instead of "end previous System Exclusive Message".  So we need to read the number of bytes to skip, and do so!
-			 * See midi.pdf page 135, "<sysex event>..."
-			 */
+		case 0x00: /* Standard sysex event */
+		case 0x07: /* Non-standard sysex event */
 
 			readSystemExclusiveMessage(inputFilePointer, position);
 			return;
@@ -117,7 +112,6 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 		case 0x04: /* Undefined System Common Message */
 		case 0x05: /* Undefined System Common Message */
 		case 0x06: /* System Common Message with no data bytes */
-		case 0x07: /* System Exclusive Message end, with no data bytes (this shouldn't happen, as this byte should only be received within the SysEx loop above)  TODO: check if I need to make this also call readSystemExclusiveMessage as with 0x00 above, due to Casio violating the spec */
 
 			dataBytesRequired = 0; /* This is redundant, just to clarify */
 			break;
