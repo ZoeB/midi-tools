@@ -53,17 +53,23 @@ void readHeaderChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 		ticksPerQuarterNote = division;
 	}
 
+	printf("\tFormat %i: ", format);
+
 	switch (format) {
 	case FORMAT_SINGLE_TRACK:
-		printf("\tFormat: single track\n");
+		printf("single track\n");
 		break;
 
 	case FORMAT_MULTIPLE_SIMULTANEOUS_TRACKS:
-		printf("\tFormat: multiple simultaneous tracks\n");
+		printf("multiple simultaneous tracks\n");
 		break;
 
 	case FORMAT_MULTIPLE_INDEPENDENT_TRACK:
-		printf("\tFormat: multiple independent tracks\n");
+		printf("multiple independent tracks\n");
+		break;
+
+	default:
+		printf("unknown\n");
 	}
 
 	printf("\tNumber of tracks: %i\n", numberOfTracks);
