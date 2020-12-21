@@ -204,6 +204,11 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 	uint8_t  dataBytesRead = 0;
 	uint32_t bytesToSkip = 0; /* For System Exclusive Messages */
 
+	char noteLetter[12] = "CCDDEFFGGAAB";
+	char noteIntonation[12] = "-#-#--#-#-#-";
+	int octave;
+	int pitch;
+
 	byte = getc(inputFilePointer);
 	(*position)++;
 
@@ -353,11 +358,18 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 
 	switch (statusNibbles[0]) {
 	case 0x08:
-		printf("Note-Off, channel %Xh, note %02Xh, velocity %02Xh\n", statusNibbles[1], dataBytes[0], dataBytes[1]);
-		break;
-
 	case 0x09:
-		printf("Note-On, channel %Xh, note %02Xh, velocity %02Xh\n", statusNibbles[1], dataBytes[0], dataBytes[1]);
+
+		if (statusNibbles[0] == 0x08) {
+			printf("Note-Off, ");
+		} else { /* statusNibbles[0] == 0x09 */
+			printf("Note-On, ");
+		}
+
+		octave = (dataBytes[0] + 8) / 12;
+		pitch = (dataBytes[0] + 8) % 12;
+
+		printf("channel %Xh, note %02Xh (%c%c%i), velocity %02Xh\n", statusNibbles[1], dataBytes[0], noteLetter[pitch], noteIntonation[pitch], octave, dataBytes[1]);
 		break;
 
 	case 0x0B:
