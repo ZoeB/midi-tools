@@ -361,7 +361,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 		break;
 
 	case 0x0B:
-		printf("Control Change, channel %Xh, note %02Xh, velocity %02Xh\n", statusNibbles[1], dataBytes[0], dataBytes[1]);
+		printf("Control Change, channel %Xh, controller %02Xh, value %02Xh\n", statusNibbles[1], dataBytes[0], dataBytes[1]);
 		break;
 	default:
 		printf("status %02Xh, data %02Xh %02Xh\n", *status, dataBytes[0], dataBytes[1]);
