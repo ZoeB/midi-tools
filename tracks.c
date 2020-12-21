@@ -396,7 +396,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 		octave = (dataBytes[0] / 12) - 1;
 		pitch = dataBytes[0] % 12;
 
-		printf("channel %Xh, note %02Xh (%c%c%i), velocity %02Xh\n", statusNibbles[1], dataBytes[0], noteLetter[pitch], noteIntonation[pitch], octave, dataBytes[1]);
+		printf("channel %Xh, %c%c%i, velocity %02Xh\n", statusNibbles[1], noteLetter[pitch], noteIntonation[pitch], octave, dataBytes[1]);
 		break;
 
 	case 0x0B:
