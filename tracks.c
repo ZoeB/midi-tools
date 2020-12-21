@@ -37,7 +37,15 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	uint8_t  metaEventType = 0;
 	uint8_t  byte = 0;
 	uint32_t bytesLeft = 0;
+
+	/* For 0x51: Set Tempo */
 	uint32_t tempo = 0;
+
+	/* For 0x58: Time Signature */
+	uint8_t  numerator = 0;
+	uint8_t  denominator = 0;
+	uint8_t  ticksPerMetronomeClick = 0;
+	uint8_t  thirtySecondNotesPerQuarterNote = 0;
 
 	printf("meta-event: ");
 
@@ -95,7 +103,8 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		printf("End of Track\n"); /* TODO: display the actual signature */
 		return;
 
-	case 0x51: /* Set Tempo */
+	case 0x51: /* Set Tempo (See midi.pdf page 138, "Set Tempo") */
+
 		byte = getc(inputFilePointer);
 		(*position)++;
 
@@ -114,10 +123,28 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		printf("Tempo %06Xh microseconds per quarter-note\n", tempo);
 		return;
 
-	case 0x58: /* Time Signature */
-		printf("Time Signature\n"); /* TODO: display the actual signature */
-		bytesLeft = 5;
-		break;
+	case 0x58: /* Time Signature (See midi.pdf page 139, "Time Signature") */
+		byte = getc(inputFilePointer);
+		(*position)++;
+
+		if (byte != 04) {
+			printf("(error: 04h expected, %02Xh received) ", byte);
+		}
+
+		numerator = getc(inputFilePointer);
+		(*position)++;
+
+		denominator = 1 << getc(inputFilePointer);
+		(*position)++;
+
+		ticksPerMetronomeClick = getc(inputFilePointer);
+		(*position)++;
+
+		thirtySecondNotesPerQuarterNote = getc(inputFilePointer);
+		(*position)++;
+
+		printf("Time Signature %i/%i\n", numerator, denominator); /* TODO: try to work out a simple way to describe the other two values */
+		return;
 
 /* TODO: implement these properly rather than simply skipping them */
 
