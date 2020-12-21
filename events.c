@@ -117,7 +117,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 		case 0x04: /* Undefined System Common Message */
 		case 0x05: /* Undefined System Common Message */
 		case 0x06: /* System Common Message with no data bytes */
-		case 0x07: /* System Exclusive Message end, with no data bytes (this shouldn't happen, as this byte should only be received within the SysEx loop above) */
+		case 0x07: /* System Exclusive Message end, with no data bytes (this shouldn't happen, as this byte should only be received within the SysEx loop above)  TODO: check if I need to make this also call readSystemExclusiveMessage as with 0x00 above, due to Casio violating the spec */
 
 			dataBytesRequired = 0; /* This is redundant, just to clarify */
 			break;
