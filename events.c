@@ -85,10 +85,8 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 		switch (statusNibbles[1]) {
 		case 0x00: /* Standard sysex event */
 		case 0x07: /* Non-standard sysex event */
-
 			readSystemExclusiveMessage(inputFilePointer, position);
 			return;
-			break; /* Clearly, this is also redundant, but generally good practice */
 
 		case 0x01:
 		case 0x03:
@@ -142,14 +140,7 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 
 			readMetaEvent(inputFilePointer, position);
 			return;
-			break; /* Clearly, this is also redundant, but generally good practice */
 		}
-
-		break;
-
-	default:
-		/* This shouldn't happen! */
-		break;
 	}
 
 	/*
