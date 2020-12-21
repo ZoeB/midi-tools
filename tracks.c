@@ -39,14 +39,14 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	uint32_t bytesLeft = 0;
 	uint32_t tempo = 0;
 
-	printf("meta event: ");
+	printf("meta-event: ");
 
 	metaEventType = getc(inputFilePointer);
 	(*position)++;
 
 	switch (metaEventType) {
 	case 0x03: /* Sequence/Track Name */
-		printf("sequence/track name: ");
+		printf("Sequence/Track Name: ");
 		bytesLeft = readVariableLengthQuantity(inputFilePointer, position);
 
 		while (bytesLeft > 0) {
@@ -59,7 +59,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		return;
 
 	case 0x04: /* Instrument Name */
-		printf("instrument name: ");
+		printf("Instrument Name: ");
 		bytesLeft = readVariableLengthQuantity(inputFilePointer, position);
 
 		while (bytesLeft > 0) {
@@ -81,7 +81,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 		byte = getc(inputFilePointer);
 		(*position)++;
-		printf("port %02Xh\n", byte);
+		printf("Port %02Xh\n", byte);
 		return;
 
 	case 0x2F: /* End of Track */
@@ -92,7 +92,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 			printf("(error: 00h expected, %02Xh received) ", byte);
 		}
 
-		printf("end of track\n"); /* TODO: display the actual signature */
+		printf("End of Track\n"); /* TODO: display the actual signature */
 		return;
 
 	case 0x51: /* Set Tempo */
@@ -111,11 +111,11 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		tempo <<= 8;
 		tempo |= getc(inputFilePointer);
 		(*position)++;
-		printf("tempo %06Xh microseconds per quarter-note\n", tempo);
+		printf("Tempo %06Xh microseconds per quarter-note\n", tempo);
 		return;
 
 	case 0x58: /* Time Signature */
-		printf("time signature\n"); /* TODO: display the actual signature */
+		printf("Time Signature\n"); /* TODO: display the actual signature */
 		bytesLeft = 5;
 		break;
 
@@ -353,13 +353,16 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 
 	switch (statusNibbles[0]) {
 	case 0x08:
-		printf("note off, channel %Xh, note %02Xh, velocity %02Xh\n", statusNibbles[1], dataBytes[0], dataBytes[1]);
+		printf("Note-Off, channel %Xh, note %02Xh, velocity %02Xh\n", statusNibbles[1], dataBytes[0], dataBytes[1]);
 		break;
 
 	case 0x09:
-		printf("note on, channel %Xh, note %02Xh, velocity %02Xh\n", statusNibbles[1], dataBytes[0], dataBytes[1]);
+		printf("Note-On, channel %Xh, note %02Xh, velocity %02Xh\n", statusNibbles[1], dataBytes[0], dataBytes[1]);
 		break;
 
+	case 0x0B:
+		printf("Control Change, channel %Xh, note %02Xh, velocity %02Xh\n", statusNibbles[1], dataBytes[0], dataBytes[1]);
+		break;
 	default:
 		printf("status %02Xh, data %02Xh %02Xh\n", *status, dataBytes[0], dataBytes[1]);
 	}
