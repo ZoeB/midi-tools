@@ -9,6 +9,14 @@ void interpretControllerNumber(uint8_t controllerNumber) {
 	 */
 
 	switch (controllerNumber) {
+	case 0x00:
+		printf("Bank Select, ");
+		break;
+
+	case 0x01:
+		printf("Modulation wheel or lever, ");
+		break;
+
 	default:
 		printf("controller %02Xh, ", controllerNumber);
 	}
