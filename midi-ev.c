@@ -37,21 +37,23 @@ void interpretMIDIEvent(uint8_t *status, uint8_t *statusNibbles, uint8_t *dataBy
 
 	case 0x08:
 	case 0x09:
-
-		if (statusNibbles[0] == 0x08) {
-			printf("Note-Off, ");
-		} else { /* statusNibbles[0] == 0x09 */
-			printf("Note-On, ");
-		}
+	case 0x0A:
 
 		octave = (dataBytes[0] / 12) - 1;
 		pitch = dataBytes[0] % 12;
 
-		printf("channel %Xh, %c%c%i, velocity %02Xh\n", statusNibbles[1], noteLetter[pitch], noteIntonation[pitch], octave, dataBytes[1]);
+		if (statusNibbles[0] == 0x08) {
+			printf("Note-Off, channel %Xh, %c%c%i, velocity %02Xh\n", statusNibbles[1], noteLetter[pitch], noteIntonation[pitch], octave, dataBytes[1]);
+		} else if (statusNibbles[0] == 0x09) {
+			printf("Note-On, channel %Xh, %c%c%i, velocity %02Xh\n", statusNibbles[1], noteLetter[pitch], noteIntonation[pitch], octave, dataBytes[1]);
+		} else { /* statusNibbles[0] == 0x0A */
+			printf("Key Pressure, channel %Xh, %c%c%i, value %02Xh\n", statusNibbles[1], noteLetter[pitch], noteIntonation[pitch], octave, dataBytes[1]);
+		}
+
 		break;
 
 	case 0x0B:
-		printf("Control Change, channel %Xh, ", statusNibbles[1]); /* See midi.pdf page 102, "Table III: Controller Numbers" */
+		printf("Control Change, channel %Xh, ", statusNibbles[1]);
 		interpretControllerNumber(dataBytes[0]);
 		printf(", value %02Xh\n", dataBytes[1]);
 		break;
