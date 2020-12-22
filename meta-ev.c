@@ -88,7 +88,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		tempo <<= 8;
 		tempo |= getc(inputFilePointer);
 		(*position)++;
-		printf("Tempo %06Xh microseconds per quarter-note\n", tempo);
+		printf("Tempo %i microseconds per quarter-note (%i BPM)\n", tempo, 60000000 / tempo);
 		return;
 
 	case 0x58: /* Time Signature (See midi.pdf page 139, "Time Signature") */
