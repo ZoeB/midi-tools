@@ -12,6 +12,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	 */
 
 	/* TODO: display these values instead of skipping them */
+	/* TODO: the "expected" errors are lengths!  So rewrite this bearing that in mind. */
 
 	uint8_t  metaEventType = 0;
 	uint8_t  byte = 0;
