@@ -12,7 +12,6 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	 */
 
 	/* TODO: display these values instead of skipping them */
-	/* TODO: the "expected" errors are lengths!  So rewrite this bearing that in mind.  I thought it would be simpler if *all* Meta-Events had specified variable lengths, and it looks like that's already the case.  "...the lengths of events which do not have a variable amount of data are given directly in hexadecimal."  It says it's only a single byte length, but that's because it's less than 128 anyway, so another way to look at it is that it is a variable length that happens not to vary.  So let's universally call readVariableLengthQuantity() here! */
 
 	uint8_t  metaEventType = 0;
 	uint8_t  byte = 0;
@@ -31,11 +30,11 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 	metaEventType = getc(inputFilePointer);
 	(*position)++;
+	bytesLeft = readVariableLengthQuantity(inputFilePointer, position);
 
 	switch (metaEventType) {
 	case 0x03: /* Sequence/Track Name */
 		printf("Sequence/Track Name: ");
-		bytesLeft = readVariableLengthQuantity(inputFilePointer, position);
 
 		while (bytesLeft > 0) {
 			printf("%c", getc(inputFilePointer));
@@ -48,7 +47,6 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 	case 0x04: /* Instrument Name */
 		printf("Instrument Name: ");
-		bytesLeft = readVariableLengthQuantity(inputFilePointer, position);
 
 		while (bytesLeft > 0) {
 			printf("%c", getc(inputFilePointer));
@@ -60,11 +58,8 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		return;
 
 	case 0x21: /* Port  TODO: verify this with official documentation.  People on forums and online guides report that it's the MIDI Port, but I'd like to see it in an official spec if possible. */
-		byte = getc(inputFilePointer);
-		(*position)++;
-
-		if (byte != 01) {
-			printf("(error: 01h expected, %02Xh received) ", byte);
+		if (bytesLeft != 1) {
+			printf("(error: length 1 expected, %i received) ", bytesLeft);
 		}
 
 		byte = getc(inputFilePointer);
@@ -73,23 +68,16 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		return;
 
 	case 0x2F: /* End of Track */
-		byte = getc(inputFilePointer);
-		(*position)++;
-
-		if (byte != 00) {
-			printf("(error: 00h expected, %02Xh received) ", byte);
+		if (bytesLeft != 0) {
+			printf("(error: length 0 expected, %i received) ", bytesLeft);
 		}
 
 		printf("End of Track\n"); /* TODO: display the actual signature */
 		return;
 
 	case 0x51: /* Set Tempo (See midi.pdf page 138, "Set Tempo") */
-
-		byte = getc(inputFilePointer);
-		(*position)++;
-
-		if (byte != 03) {
-			printf("(error: 03h expected, %02Xh received) ", byte);
+		if (bytesLeft != 3) {
+			printf("(error: length 3 expected, %i received) ", bytesLeft);
 		}
 
 		tempo |= getc(inputFilePointer);
@@ -104,11 +92,8 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		return;
 
 	case 0x58: /* Time Signature (See midi.pdf page 139, "Time Signature") */
-		byte = getc(inputFilePointer);
-		(*position)++;
-
-		if (byte != 04) {
-			printf("(error: 04h expected, %02Xh received) ", byte);
+		if (bytesLeft != 4) {
+			printf("(error: length 4 expected, %i received) ", bytesLeft);
 		}
 
 		numerator = getc(inputFilePointer);
@@ -129,11 +114,17 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 /* TODO: implement these properly rather than simply skipping them */
 
 	case 0x00: /* Sequence Number */
-		bytesLeft = 3;
+		if (bytesLeft != 3) {
+			printf("(error: length 3 expected, %i received) ", bytesLeft);
+		}
+
 		break;
 
 	case 0x20: /* MIDI Channel Prefix */
-		bytesLeft = 2;
+		if (bytesLeft != 2) {
+			printf("(error: length 2 expected, %i received) ", bytesLeft);
+		}
+
 		break;
 
 	case 0x01: /* Text Event */
@@ -142,15 +133,20 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	case 0x06: /* Marker */
 	case 0x07: /* Cue Point */
 	case 0x7F: /* Sequencer-Specific Meta-Event */
-		bytesLeft = readVariableLengthQuantity(inputFilePointer, position);
 		break;
 
 	case 0x54: /* SMPTE Offset */
-		bytesLeft = 6;
+		if (bytesLeft != 6) {
+			printf("(error: length 6 expected, %i received) ", bytesLeft);
+		}
+
 		break;
 
 	case 0x59: /* Key Signature */
-		bytesLeft = 3;
+		if (bytesLeft != 3) {
+			printf("(error: length 3 expected, %i received) ", bytesLeft);
+		}
+
 		break;
 	}
 
