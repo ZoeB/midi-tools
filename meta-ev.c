@@ -12,7 +12,7 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	 */
 
 	/* TODO: display these values instead of skipping them */
-	/* TODO: the "expected" errors are lengths!  So rewrite this bearing that in mind. */
+	/* TODO: the "expected" errors are lengths!  So rewrite this bearing that in mind.  I thought it would be simpler if *all* Meta-Events had specified variable lengths, and it looks like that's already the case.  "...the lengths of events which do not have a variable amount of data are given directly in hexadecimal."  It says it's only a single byte length, but that's because it's less than 128 anyway, so another way to look at it is that it is a variable length that happens not to vary.  So let's universally call readVariableLengthQuantity() here! */
 
 	uint8_t  metaEventType = 0;
 	uint8_t  byte = 0;
