@@ -16,4 +16,4 @@ Each track chunk contains several *events*.  Each event is either a *MIDI event*
 	* Decrease the resolution to the lowest possible for that song, down to 24 PPQN
 	* Add markers (named "In" and "Out") a bar before any part starts and a bar (or perhaps 4, to capture any tail in the sound) after it ends -- this would be useful for working with a transport control with skip-to-marker functions
 	* Explode drum track to one track per pitch -- this would work around Reaper's explosion bug
-* Convert a raw sysex message into a MIDI file (format 0) containing it
+* Create ```syxtomid.c```: Convert one or more .syx files each containing a single sysex message into a MIDI file containing them all (format 0 if from one .syx file, format 2 if from multiple .syx files)
