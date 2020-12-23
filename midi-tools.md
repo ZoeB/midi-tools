@@ -1,4 +1,4 @@
-# MIDIread
+# MIDI tools
 
 ## midi.pdf
 
