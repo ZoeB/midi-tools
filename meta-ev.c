@@ -57,6 +57,18 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		printf("\n");
 		return;
 
+	case 0x06: /* Marker */
+		printf("Marker: ");
+
+		while (bytesLeft > 0) {
+			printf("%c", getc(inputFilePointer));
+			(*position)++;
+			bytesLeft--;
+		}
+
+		printf("\n");
+		return;
+
 	case 0x09: /* Device Name  TODO: verify this with official documentation */
 		printf("Device Name: ");
 
@@ -142,7 +154,6 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	case 0x01: /* Text Event */
 	case 0x02: /* Copyright Notice */
 	case 0x05: /* Lyric */
-	case 0x06: /* Marker */
 	case 0x07: /* Cue Point */
 	case 0x7F: /* Sequencer-Specific Meta-Event */
 		break;
