@@ -23,11 +23,14 @@ void interpretControllerNumber(uint8_t controllerNumber) {
 }
 
 void interpretMIDIEvent(uint8_t *status, uint8_t *statusNibbles, uint8_t *dataBytes) {
+	uint8_t  displayChannel = 1;
 	char     noteLetter[12] = "CCDDEFFGGAAB";
 	char     noteIntonation[12] = "-#-#--#-#-#-";
 	uint8_t  octave = 0;
 	uint8_t  pitch = 0;
 	int16_t  pitchBend = 0;
+
+	displayChannel = statusNibbles[1] + 1;
 
 	switch (statusNibbles[0]) {
 
@@ -44,33 +47,33 @@ void interpretMIDIEvent(uint8_t *status, uint8_t *statusNibbles, uint8_t *dataBy
 		pitch = dataBytes[0] % 12;
 
 		if (statusNibbles[0] == 0x08) {
-			printf("Note-Off, channel %Xh, %c%c%i, velocity %02Xh\n", statusNibbles[1], noteLetter[pitch], noteIntonation[pitch], octave, dataBytes[1]);
+			printf("Note-Off, channel %02i, %c%c%i, velocity %03i\n", displayChannel, noteLetter[pitch], noteIntonation[pitch], octave, dataBytes[1]);
 		} else if (statusNibbles[0] == 0x09) {
-			printf("Note-On, channel %Xh, %c%c%i, velocity %02Xh\n", statusNibbles[1], noteLetter[pitch], noteIntonation[pitch], octave, dataBytes[1]);
+			printf("Note-On, channel %02i, %c%c%i, velocity %03i\n", displayChannel, noteLetter[pitch], noteIntonation[pitch], octave, dataBytes[1]);
 		} else { /* statusNibbles[0] == 0x0A */
-			printf("Key Pressure, channel %Xh, %c%c%i, value %02Xh\n", statusNibbles[1], noteLetter[pitch], noteIntonation[pitch], octave, dataBytes[1]);
+			printf("Key Pressure, channel %02i, %c%c%i, value %03i\n", displayChannel, noteLetter[pitch], noteIntonation[pitch], octave, dataBytes[1]);
 		}
 
 		break;
 
 	case 0x0B:
-		printf("Control Change, channel %Xh, ", statusNibbles[1]);
+		printf("Control Change, channel %02i, ", displayChannel);
 		interpretControllerNumber(dataBytes[0]);
-		printf(", value %02Xh\n", dataBytes[1]);
+		printf(", value %03i\n", dataBytes[1]);
 		break;
 
 	case 0x0C:
-		printf("Program Change, channel %Xh, value %Xh\n", statusNibbles[1], dataBytes[0]);
+		printf("Program Change, channel %02i, value %03i\n", displayChannel, dataBytes[0]);
 		break;
 
 	case 0x0D:
-		printf("Channel Pressure, channel %Xh, value %Xh\n", statusNibbles[1], dataBytes[0]);
+		printf("Channel Pressure, channel %02i, value %03i\n", displayChannel, dataBytes[0]);
 		break;
 
 	case 0x0E: /* Pitch Bend (see page 51) */
 		pitchBend = (dataBytes[1] << 7) | dataBytes[0]; /* Least significant byte, then most significant byte */
 		pitchBend -= 0x2000; /* The spec defines the bytes 0x00 0x40 as neutral.  That's 0x40 0x00 with the most significant byte first; 0x20 0x00 when using all 8 bits, not just 7 of them.  So 0x2000 == neutral, neither sharp nor flat.  So subtract that to make the value bipolar, for a signed int. */
-		printf("Pitch Bend, channel %Xh, value %+i\n", statusNibbles[1], pitchBend);
+		printf("Pitch Bend, channel %02i, value %+05i\n", displayChannel, pitchBend);
 		break;
 
 	default:
