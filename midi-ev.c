@@ -69,7 +69,7 @@ void interpretMIDIEvent(uint8_t *status, uint8_t *statusNibbles, uint8_t *dataBy
 
 	case 0x0E: /* Pitch Bend (see page 51) */
 		pitchBend = (dataBytes[1] << 7) | dataBytes[0]; /* Least significant byte, then most significant byte */
-		pitchBend -= 0x4000; /* 0x4000 == neutral, neither sharp nor flat.  So subtract that to make it bipolar, for a signed int. */
+		pitchBend -= 0x2000; /* 0x00 0x40 (0x40 0x00 with the most significant byte first; 0x20 0x00 when using all 8 bits, not just 7 of them) == neutral, neither sharp nor flat.  So subtract that to make it bipolar, for a signed int. */
 		printf("Pitch Bend, channel %Xh, value %+i\n", statusNibbles[1], pitchBend);
 		break;
 

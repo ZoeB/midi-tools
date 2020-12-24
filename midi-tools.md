@@ -12,7 +12,7 @@ Each track chunk contains several *events*.  Each event is either a *MIDI event*
 
 ## Bugs to fix
 
-* Verify pitchbend is being displayed accurately.  Reaper seems to disagree.
+None known.
 
 ## Features to possibly implement
 
