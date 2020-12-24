@@ -10,6 +10,10 @@ Each MIDI file contains several *chunks*.  Each chunk is either a *header chunk*
 
 Each track chunk contains several *events*.  Each event is either a *MIDI event*, *sysex event*, or *meta-event*.
 
+## Bugs to fix
+
+* Verify pitchbend is being displayed accurately.  Reaper seems to disagree.
+
 ## Features to possibly implement
 
 * Show the pitchbend amount in cents, based on what the range is set to
