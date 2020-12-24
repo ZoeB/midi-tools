@@ -12,6 +12,7 @@ Each track chunk contains several *events*.  Each event is either a *MIDI event*
 
 ## Features to possibly implement
 
+* Allow Real-Time events to occur inside unrelated events' data bytes (P37).  This will allow the MIDI event handling function to work on both MIDI Files and live MIDI communication.
 * Tidy up a MIDI file, to allow optional changes to it
 	* Decrease the resolution to the lowest possible for that song, down to 24 PPQN
 	* Add markers (named "In" and "Out") a bar before any part starts and a bar (or perhaps 4, to capture any tail in the sound) after it ends -- this would be useful for working with a transport control with skip-to-marker functions
