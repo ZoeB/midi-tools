@@ -13,6 +13,7 @@ Each track chunk contains several *events*.  Each event is either a *MIDI event*
 ## Features to possibly implement
 
 * Show the pitchbend amount in cents, based on what the range is set to
+* Show all the timings in absolute bars (with 3 decimal places) or HH:MM:SS:FF, not relative raw ticks
 * Allow Real-Time events to occur inside unrelated events' data bytes (P37).  This will allow the MIDI event handling function to work on both MIDI Files and live MIDI communication.
 * Tidy up a MIDI file, to allow optional changes to it
 	* Decrease the resolution to the lowest possible for that song, down to 24 PPQN
