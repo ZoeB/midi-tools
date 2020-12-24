@@ -47,6 +47,10 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 			printf("Instrument Name: ");
 			break;
 
+		case 0x05:
+			printf("Lyric: ");
+			break;
+
 		case 0x06:
 			printf("Marker: ");
 			break;
@@ -57,7 +61,6 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 		default:
 			printf("Unknown plain text: ");
-			break;
 		}
 
 		/*
