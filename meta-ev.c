@@ -32,55 +32,49 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 	(*position)++;
 	bytesLeft = readVariableLengthQuantity(inputFilePointer, position);
 
+	if (metaEventType > 0x00 && metaEventType < 0x0A) {
+
+		/*
+		 * Plain text meta-event
+		 */
+
+		switch (metaEventType) {
+		case 0x03:
+			printf("Sequence/Track Name: ");
+			break;
+
+		case 0x04:
+			printf("Instrument Name: ");
+			break;
+
+		case 0x06:
+			printf("Marker: ");
+			break;
+
+		case 0x09: /* TODO: verify this with official documentation */
+			printf("Device Name: ");
+			break;
+
+		default:
+			printf("Unknown plain text: ");
+			break;
+		}
+
+		/*
+		 * Simply display the text verbatim
+		 */
+
+		while (bytesLeft > 0) {
+			printf("%c", getc(inputFilePointer));
+			(*position)++;
+			bytesLeft--;
+		}
+
+		printf("\n");
+		return;
+	}
+
 	switch (metaEventType) {
-	case 0x03: /* Sequence/Track Name */
-		printf("Sequence/Track Name: ");
-
-		while (bytesLeft > 0) {
-			printf("%c", getc(inputFilePointer));
-			(*position)++;
-			bytesLeft--;
-		}
-
-		printf("\n");
-		return;
-
-	case 0x04: /* Instrument Name */
-		printf("Instrument Name: ");
-
-		while (bytesLeft > 0) {
-			printf("%c", getc(inputFilePointer));
-			(*position)++;
-			bytesLeft--;
-		}
-
-		printf("\n");
-		return;
-
-	case 0x06: /* Marker */
-		printf("Marker: ");
-
-		while (bytesLeft > 0) {
-			printf("%c", getc(inputFilePointer));
-			(*position)++;
-			bytesLeft--;
-		}
-
-		printf("\n");
-		return;
-
-	case 0x09: /* Device Name  TODO: verify this with official documentation */
-		printf("Device Name: ");
-
-		while (bytesLeft > 0) {
-			printf("%c", getc(inputFilePointer));
-			(*position)++;
-			bytesLeft--;
-		}
-
-		printf("\n");
-		return;
-
 	case 0x21: /* Port  TODO: verify this with official documentation */
 		if (bytesLeft != 1) {
 			printf("(error: length 1 expected, %i received) ", bytesLeft);
