@@ -23,10 +23,11 @@ void interpretControllerNumber(uint8_t controllerNumber) {
 }
 
 void interpretMIDIEvent(uint8_t *status, uint8_t *statusNibbles, uint8_t *dataBytes) {
-	char noteLetter[12] = "CCDDEFFGGAAB";
-	char noteIntonation[12] = "-#-#--#-#-#-";
-	int octave;
-	int pitch;
+	char     noteLetter[12] = "CCDDEFFGGAAB";
+	char     noteIntonation[12] = "-#-#--#-#-#-";
+	uint8_t  octave = 0;
+	uint8_t  pitch = 0;
+	int16_t  pitchBend = 0;
 
 	switch (statusNibbles[0]) {
 
@@ -64,6 +65,12 @@ void interpretMIDIEvent(uint8_t *status, uint8_t *statusNibbles, uint8_t *dataBy
 
 	case 0x0D:
 		printf("Channel Pressure, channel %Xh, value %Xh\n", statusNibbles[1], dataBytes[0]);
+		break;
+
+	case 0x0E: /* Pitch Bend (see page 51) */
+		pitchBend = (dataBytes[1] << 8) | dataBytes[0]; /* Least significant byte, then most significant byte */
+		pitchBend -= 0x4000; /* 0x4000 == neutral, neither sharp nor flat.  So subtract that to make it bipolar, for a signed int. */
+		printf("Pitch Bend, channel %Xh, value %+i\n", statusNibbles[1], pitchBend);
 		break;
 
 	default:

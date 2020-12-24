@@ -1,3 +1,3 @@
 all:
 	gcc midiread.c -o midiread
-	./midiread baltica.mid | less
+	./midiread test.mid | less
