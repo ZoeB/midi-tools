@@ -39,6 +39,14 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		 */
 
 		switch (metaEventType) {
+		case 0x01:
+			printf("Text Event: ");
+			break;
+
+		case 0x02:
+			printf("Copyright Notice: ");
+			break;
+
 		case 0x03:
 			printf("Sequence/Track Name: ");
 			break;
@@ -53,6 +61,10 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 
 		case 0x06:
 			printf("Marker: ");
+			break;
+
+		case 0x07:
+			printf("Cue Point: ");
 			break;
 
 		case 0x09: /* TODO: verify this with official documentation */
