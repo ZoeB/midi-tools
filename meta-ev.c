@@ -57,7 +57,19 @@ void readMetaEvent(FILE *inputFilePointer, uint32_t *position) {
 		printf("\n");
 		return;
 
-	case 0x21: /* Port  TODO: verify this with official documentation.  People on forums and online guides report that it's the MIDI Port, but I'd like to see it in an official spec if possible. */
+	case 0x09: /* Device Name  TODO: verify this with official documentation */
+		printf("Device Name: ");
+
+		while (bytesLeft > 0) {
+			printf("%c", getc(inputFilePointer));
+			(*position)++;
+			bytesLeft--;
+		}
+
+		printf("\n");
+		return;
+
+	case 0x21: /* Port  TODO: verify this with official documentation */
 		if (bytesLeft != 1) {
 			printf("(error: length 1 expected, %i received) ", bytesLeft);
 		}
