@@ -16,8 +16,8 @@ None known.
 
 ## Features to possibly implement
 
-* Display the pitchbend amount in semitones and cents, based on the pitch bend sensitivity semitones and cents, two variables that persist between events, defaulting to 2 and 0 respectively
-* Implement selecting a Registered Parameter and changing its value, using variables that persist between events
+* Display the pitchbend amount in semitones and cents, based on the channel's pitch bend sensitivity semitones and cents, two channel-specific variables (two arrays of 16 uint8_ts each) that persist between events, defaulting to 2 and 0 respectively
+* Implement selecting a Registered Parameter and changing its value, using channel-specific variables that persist between events
 * Implement changing the two pitch bend range/sensitivity variables via Registered Parameter Number 00 00
 * Show all the timings in absolute bars (with 3 decimal places) or HH:MM:SS:FF, not relative raw ticks
 * Allow Real-Time events to occur inside unrelated events' data bytes (P37).  This will allow the MIDI event handling function to work on both MIDI Files and live MIDI communication.
