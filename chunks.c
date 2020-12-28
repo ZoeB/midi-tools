@@ -100,7 +100,9 @@ void readTrackChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 
 	/*
 	 * Pitch bend sensitivity is persistent from one event to the next,
-	 * and channel specific.
+	 * and channel specific.  The default range of +/- 2 semitones and 0 cents
+	 * seems to be specific to General MIDI (page 148), but we need a default,
+	 * so let's go with that anyway.
 	 *
 	 * See midi.pdf page 50, "Pitch Bend Sensitivity"
 	 */
