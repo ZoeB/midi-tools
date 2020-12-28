@@ -76,7 +76,7 @@ void interpretMIDIEvent(uint8_t *status, uint8_t *statusNibbles, uint8_t *dataBy
 		pitchBend = (dataBytes[1] << 7) | dataBytes[0]; /* Least significant byte, then most significant byte */
 		pitchBend -= 0x2000; /* The spec defines the bytes 0x00 0x40 as neutral.  That's 0x40 0x00 with the most significant byte first; 0x20 0x00 when using all 8 bits, not just 7 of them.  So 0x2000 == neutral, neither sharp nor flat.  So subtract that to make the value bipolar, for a signed int. */
 		pitchBendRange = *pitchBendSensitivityInSemitones + (*pitchBendSensitivityInCents / 100);
-		pitchBendInSemitones = pitchBend / 0x1FFF * pitchBendRange; /* Instead of displaying +/- 8191, display the actual semitones and cents */
+		pitchBendInSemitones = pitchBend * pitchBendRange / 0x1FFF; /* Instead of displaying +/- 8191, display the actual semitones and cents */
 		printf("Pitch Bend, channel %02i, %+07.3f\n", displayChannel, pitchBendInSemitones);
 		break;
 
