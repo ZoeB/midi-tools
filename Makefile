@@ -1,3 +1,3 @@
 all:
 	gcc midiread.c -o midiread
-	./midiread test.mid | less
+	./midiread tests/test.mid | less
