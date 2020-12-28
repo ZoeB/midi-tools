@@ -22,7 +22,7 @@ void interpretControllerNumber(uint8_t controllerNumber) {
 	}
 }
 
-void interpretMIDIEvent(uint8_t *status, uint8_t *statusNibbles, uint8_t *dataBytes) {
+void interpretMIDIEvent(uint8_t *status, uint8_t *statusNibbles, uint8_t *dataBytes, uint8_t *pitchBendSensitivityInSemitones, uint8_t *pitchBendSensitivityInCents) {
 	uint8_t  displayChannel = 1;
 	char     noteLetter[12] = "CCDDEFFGGAAB";
 	char     noteIntonation[12] = "-#-#--#-#-#-";

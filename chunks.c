@@ -98,10 +98,20 @@ void readTrackChunk(FILE *inputFilePointer, uint32_t chunkLength) {
 	uint8_t  status = 0; /* Initialised here, as it can persist from one
 	                       * MIDI event to the next, a "running status" */
 
+	/*
+	 * Pitch bend sensitivity is persistent from one event to the next,
+	 * and channel specific.
+	 *
+	 * See midi.pdf page 50, "Pitch Bend Sensitivity"
+	 */
+
+	uint8_t pitchBendSensitivityInSemitones[16] = {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
+	uint8_t pitchBendSensitivityInCents[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
 	while (position < chunkLength) {
 		ticks = readVariableLengthQuantity(inputFilePointer, &position);
 		printf("\t%08Xh more ticks in: ", ticks);
-		readEvent(inputFilePointer, &position, &status);
+		readEvent(inputFilePointer, &position, &status, &pitchBendSensitivityInSemitones[0], &pitchBendSensitivityInCents[0]);
 	}
 }
 

@@ -4,7 +4,7 @@
 
 /* See midi.pdf page 35, "Data Format" */
 
-void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
+void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status, uint8_t *pitchBendSensitivityInSemitones, uint8_t *pitchBendSensitivityInCents) {
 
 	/*
 	 * Most MIDI events consist of 1 to 3 bytes: a status byte followed by 0 to 2 data bytes.
@@ -154,5 +154,5 @@ void readEvent(FILE *inputFilePointer, uint32_t *position, uint8_t *status) {
 		dataBytesRead++;
 	}
 
-	interpretMIDIEvent(status, statusNibbles, dataBytes); /* Only interpret, as we've already read the bytes */
+	interpretMIDIEvent(status, statusNibbles, dataBytes, &pitchBendSensitivityInSemitones[0], &pitchBendSensitivityInCents[0]); /* Only interpret, as we've already read the bytes */
 }
